@@ -19,7 +19,7 @@ export default function Dashboard() {
     if (!Auth.getInstance().loginState) {
       //history.push('/');
     }
-  })
+  });
 
   return (
     <React.Fragment>
@@ -27,7 +27,7 @@ export default function Dashboard() {
       onCancel={() => setLogoutConfirm(false)} onConfirm={() => {
         auth.logout(); history.push('/');
       }} cancelButton='取消' confirmButton='确定' />
-      <Menu fixed='top' borderless size='large'>
+      <Menu borderless size='large'>
         <Container>
           <Menu.Item header>XSchedule</Menu.Item>
           <Menu.Item as={Link} to='/dashboard'>控制台</Menu.Item>
@@ -42,14 +42,14 @@ export default function Dashboard() {
 
       <Switch>
         <Route exact path='/dashboard'>
-          <Container style={{ marginTop: '6em' }}>
+          <Container style={{ marginTop: '2em' }}>
             <Header as='h3' dividing>任务列表
               <Button compact color='blue' as={Link} to='/new'
               style={{ marginLeft: 12 }}>
                 <Icon name='add' />新任务
               </Button>
             </Header>
-            <Table singleLine striped columns={4}>
+            <Table singleLine striped columns={4} selectable>
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell>状态</Table.HeaderCell>
@@ -61,7 +61,7 @@ export default function Dashboard() {
               <Table.Body>
                 {tableData.map(({ status, name, started}, index) =>
                   <Table.Row key={index}>
-                    <Table.Cell collapsing>{ status == 'finished' ? 
+                    <Table.Cell collapsing>{ status === 'finished' ? 
                     (<div><Icon name='check' />已完成</div>) :
                     (<div><Icon name='play' />进行中</div>) }</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
