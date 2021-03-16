@@ -3,6 +3,7 @@ import { useHistory } from "react-router";
 import { Button, Form, Grid, Header, Input, Message, Modal, Segment, Step } from "semantic-ui-react";
 import SwipeableViews from 'react-swipeable-views';
 import { FilePond } from "react-filepond";
+import { AgGridReact } from "ag-grid-react/lib/agGridReact";
 
 function getSteps(steps: string[], current: number) {
   return steps.map((value, index) => {
@@ -30,6 +31,13 @@ export default function New() {
           </Step.Group>
           <Modal size='fullscreen' open={tableOpen} onClose={() => setTableOpen(false)}>
             <Modal.Header content='查看及修改数据' />
+            <Modal.Content>
+              <AgGridReact />
+            </Modal.Content>
+            <Modal.Actions>
+              <Button positive content='保存' />
+              <Button negative onClick={() => setTableOpen(false)} content='取消' />
+            </Modal.Actions>
           </Modal>
           <Segment stacked attached textAlign='left'>
             <SwipeableViews index={step} style={{ marginBottom: '1em' }}>
@@ -53,8 +61,7 @@ export default function New() {
               <React.Fragment>
                 <Header as='h3' content='接下来，请上传数据文件：' />
                 <FilePond allowMultiple server='http://localhost:5000/upload' instantUpload={false}
-                onprocessfilestart={() => setTableOpen(true)}
-                onprocessfileprogress={(file, progress) => progress = 100}
+                onprocessfilestart={(file) => setTableOpen(true)}
                 labelIdle='拖放文件 或 <span class="filepond--label-action">手动选择</span>' />
               </React.Fragment>
               <Header>Slide4</Header>
