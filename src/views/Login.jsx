@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
-import { Link } from "react-router-dom";
 import { Button, Form, Grid, Header, Message, Segment } from "semantic-ui-react";
 import Auth from "../auth/core";
 
