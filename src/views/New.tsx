@@ -1,10 +1,12 @@
 import React, { useRef, useState } from "react";
 import { useHistory } from "react-router";
-import { Button, Grid, Header, Icon, Input, List, Message, Modal, Segment, Step } from "semantic-ui-react";
+import { Button, DropdownItemProps, Form, Grid, Header, Icon, Input, Label, List, Message, Modal, Segment, Select, Step } from "semantic-ui-react";
 import SwipeableViews from 'react-swipeable-views';
 import Papa from "papaparse";
 import { GridApi } from "ag-grid-community";
 import MaterialTable from "material-table";
+import { FilePond } from "react-filepond";
+import { FilePondFile } from "filepond";
 
 function getSteps(steps: string[], current: number) {
   return steps.map((value, index) => {
@@ -16,26 +18,17 @@ function getSteps(steps: string[], current: number) {
 
 export default function New() {
   const history = useHistory();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [step, setStep] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
-  const [gridApi, setGridApi] = useState<GridApi>();
+  const [headers, setHeaders] = useState<object[]>([]);
+  const [options, setOptions] = useState<DropdownItemProps[]>([]);
   const [tableData, setTableData] = useState<object[]>([]);
   const [tableOpen, setTableOpen] = useState(false);
-  const steps = ['欢迎', '取个名字', '来点数据', '个性化', '大功告成'];
-  const headers: object[] = [];
+  const steps = ['欢迎', '取个名字', '来点数据', '做些修改', '大功告成'];
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
-
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let newFiles = event.target.files, res = [];
-    if (newFiles?.length)
-      for (let i = 0; i < newFiles.length; i++) {
-        res.push(newFiles[i]);
-      }
-      setFiles([...files, ...res]);
-  };
 
   const iniTable = (index: number) => {
     Papa.parse(files[index], {
@@ -44,12 +37,24 @@ export default function New() {
       skipEmptyLines: true,
       encoding: 'gbk',
       complete: (res) => {
+        let new_headers = [];
         let data = res.data as object[];
         setTableData(data);
         for (let key in data[0])
-          headers.push({ field: key});
+          new_headers.push({ title: key, field: key });
+        setHeaders(new_headers);
+        setTableOpen(true);
       }
     })
+  };
+
+  const updateFiles = (newFiles: FilePondFile[]) => {
+    setFiles(newFiles.map(fileItem => fileItem.file));
+    setOptions(newFiles.map((fileItem, index) => ({
+      key: index,
+      value: index,
+      text: fileItem.file.name
+    })));
   };
 
   const handleSubmit = () => {
@@ -63,7 +68,7 @@ export default function New() {
         <Modal.Header content='查看及修改数据' />
         <Modal.Content>
           <div style={{ height: '60vh', width: '100%' }}>
-            <MaterialTable columns={headers} data={tableData} />
+            <MaterialTable columns={headers} data={tableData} title='' />
           </div>
         </Modal.Content>
         <Modal.Actions>
@@ -95,35 +100,22 @@ export default function New() {
                 } fluid />
               </React.Fragment>
 
-              <div>
+              <React.Fragment>
                 <Header as='h3' content='接下来，请上传数据文件：' />
-                <input type='file' ref={fileInputRef} multiple
-                style={{ display: 'none' }} onChange={handleUpload} />
-                <Button content='添加文件' onClick={() => fileInputRef.current?.click()} 
-                attached='top' color='blue' />
-                <Segment attached>{ !files ? <Header as='h4' content='无文件' /> :
-                <List divided>
-                  {files.map((value, index) => 
-                  <List.Item key={index}>
-                    <List.Content floated='left'>
-                      <Button icon='delete' compact onClick={() => {
-                        let newFiles = files;
-                        newFiles.splice(index, 1);
-                        setFiles(newFiles);
-                      }} />
-                    </List.Content>
-                    <List.Content floated='right'>
-                      <Button content='编辑' onClick={() => iniTable(index)} />
-                    </List.Content>
-                    <List.Content verticalAlign='middle' content={value.name} />
-                  </List.Item>
-                  )}
-                </List>
-                }</Segment>
-              </div>
+                <FilePond files={files} onupdatefiles={updateFiles} allowMultiple={true}
+                maxFiles={5} labelIdle='拖放到此处 或 <span class="filepond--label-action">手动选择</span>' />
+              </React.Fragment>
 
               <React.Fragment>
                 <Header as='h3' content='现在，你可以添加一些个性化设置。' />
+                <Header as='h4' content='调整数据' dividing />
+                <Form>
+                  <Form.Field inline>
+                    <label>选择一个文件</label>
+                    <Select options={options} />
+                    <Button content='打开' attached='right' />
+                  </Form.Field>
+                </Form>
               </React.Fragment>
               
               <React.Fragment>
