@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import { Button, DropdownItemProps, Grid, Header, Input, Message, Modal, Segment, Step } from "semantic-ui-react";
+import { Button, Grid, Header, Input, Message, Modal, Segment, Step } from "semantic-ui-react";
 import SwipeableViews from 'react-swipeable-views';
 import Papa from "papaparse";
 import MaterialTable from "material-table";
 import { FilePond } from "react-filepond";
 import { FilePondFile } from "filepond";
-import { MenuItem, TextField, Button as MTButton, Stepper, StepLabel } from "@material-ui/core";
+import { MenuItem, TextField, Button as MTButton, Slide, Dialog, AppBar, Toolbar, IconButton, Icon, Typography, makeStyles, Theme, createStyles } from "@material-ui/core";
+import localization from '../localization/MaterialTable';
+import { TransitionProps } from "@material-ui/core/transitions/transition";
 
 function getSteps(steps: string[], current: number) {
   return steps.map((value, index) => {
@@ -16,8 +18,27 @@ function getSteps(steps: string[], current: number) {
   });
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    appBar: { position: 'relative' },
+    title: {
+      marginLeft: theme.spacing(2),
+      flex: 1
+    },
+    table: { margin: theme.spacing(2) }
+  }),
+);
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & { children?: React.ReactElement },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 export default function New() {
   const history = useHistory();
+  const classes = useStyles();
 
   const [step, setStep] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
@@ -31,21 +52,22 @@ export default function New() {
   const prevStep = () => setStep(step - 1);
 
   const iniTable = () => {
-    Papa.parse(files[fileIndex], {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-      encoding: 'gbk',
-      complete: (res) => {
-        let new_headers = [];
-        let data = res.data as object[];
-        setTableData(data);
-        for (let key in data[0])
-          new_headers.push({ title: key, field: key });
-        setHeaders(new_headers);
-        setTableOpen(true);
-      }
-    })
+    if (files[fileIndex])
+      Papa.parse(files[fileIndex], {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        encoding: 'gbk',
+        complete: (res) => {
+          let new_headers = [];
+          let data = res.data as object[];
+          setTableData(data);
+          for (let key in data[0])
+            new_headers.push({ title: key, field: key });
+          setHeaders(new_headers);
+          setTableOpen(true);
+        }
+      });
   };
 
   const updateFiles = (newFiles: FilePondFile[]) =>
@@ -55,28 +77,45 @@ export default function New() {
     history.push('/dashboard');
   };
 
+  const setTableClose = () => setTableOpen(false);
+  const saveTableData = () => {
+    setTableClose();
+  }
+
   return (
     <React.Fragment>
-      <Modal size='fullscreen' open={tableOpen} onClose={() => setTableOpen(false)}
-      style={{ position: 'relative' }}>
-        <Modal.Header content='查看及修改数据' />
-        <Modal.Content>
-          <div style={{ height: '60vh', width: '100%' }}>
-            <MaterialTable columns={headers} data={tableData} title='' />
-          </div>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button positive content='保存' />
-          <Button negative onClick={() => setTableOpen(false)} content='取消' />
-        </Modal.Actions>
-      </Modal>
+      <Dialog fullScreen open={tableOpen} onClose={setTableClose} TransitionComponent={Transition}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge='start' color='inherit' onClick={setTableClose}>
+              <Icon>close</Icon>
+            </IconButton>
+            <Typography variant='h6' className={classes.title}>查看及修改数据</Typography>
+            <MTButton color='inherit' onClick={saveTableData}>
+              <Typography variant='body1'>保存</Typography>
+            </MTButton>
+          </Toolbar>
+        </AppBar>
+        <div className={classes.table}>
+          <MaterialTable columns={headers} data={tableData} title=''
+          options={{
+            selection: true, exportButton: true, 
+            pageSize: 9, pageSizeOptions: [9]
+          }} actions={[{
+            tooltip: '删除所选行',
+            icon: 'delete',
+            onClick: (e, data) => {}
+          }]} localization={localization} />
+        </div>
+      </Dialog>
+
       <Grid textAlign='center' style={{ height: '100vh'}} verticalAlign='middle'>
         <Grid.Column width='9'>
           <Step.Group ordered attached='top'>
             { getSteps(steps, step) }
           </Step.Group>
           <Segment stacked textAlign='left' attached>
-            <SwipeableViews index={step} style={{ margin: '0.5em' }}>
+            <SwipeableViews index={step} style={{ margin: '1em 0' }}>
               <React.Fragment>
                 <Header as='h1' color='teal' content='欢迎！'
                 subheader='本向导将帮助你新建一个排产任务' />
@@ -101,7 +140,7 @@ export default function New() {
               </React.Fragment>
 
               <React.Fragment>
-                <Header as='h3' content='现在，你可以添加一些个性化设置。' />
+                <Header as='h3' content='现在，你可以按你的意愿做些调整。' />
                 <Header as='h4' content='调整数据' dividing />
                 <Message warning>
                   <Message.Header>注意</Message.Header>
@@ -109,7 +148,7 @@ export default function New() {
                 </Message>
                 <TextField select value={fileIndex} variant='outlined' size='small'
                 onChange={(e) => setFileIndex(e.target.value as unknown as number)}
-                style={{ width: '50%' }}>
+                style={{ width: '50%' }} label='选择文件'>
                   {files.map((file, index) => 
                   <MenuItem key={index} value={index}>{file.name}</MenuItem>
                   )}
@@ -125,7 +164,7 @@ export default function New() {
                 <Header as='h2' content='之后会发生什么？' />
                 <p>排产任务将被提交到服务器进行计算，这一过程可能较长。 </p>
                 <p>不过，不用担心，你随时可以在控制台查看现有的排产任务及其运行状态；
-                  如果你有了新的计划，也可以追加订单或者创建新任务。</p>
+                  如果你有了新的计划，也可以对现有任务追加订单或者创建新任务。</p>
               </React.Fragment>
             </SwipeableViews>
             <Button.Group widths='2' fluid>
