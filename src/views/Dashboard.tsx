@@ -1,3 +1,4 @@
+import { IconButton, Icon as MTIcon, Button as MTButton, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Route, useHistory } from "react-router";
 import { Link, Switch } from "react-router-dom";
@@ -66,9 +67,12 @@ export default function Dashboard() {
                     (<div><Icon name='play' />进行中</div>) }</Table.Cell>
                     <Table.Cell>{name}</Table.Cell>
                     <Table.Cell>{started}</Table.Cell>
-                    <Table.Cell><Button icon as={Link} to={'/dashboard/' + name}>
-                      <Icon name='external' />
-                    </Button></Table.Cell>
+                    <Table.Cell textAlign='right'>
+                      <MTButton component={Link} to={'/dashboard/' + name}
+                      endIcon={<MTIcon>arrow_forward</MTIcon>} size='large'>
+                        <Typography variant='body1'>详情</Typography>
+                      </MTButton>
+                    </Table.Cell>
                   </Table.Row>
                 )}
               </Table.Body>

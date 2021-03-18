@@ -1,12 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router";
-import { Button, DropdownItemProps, Form, Grid, Header, Icon, Input, Label, List, Message, Modal, Segment, Select, Step } from "semantic-ui-react";
+import { Button, DropdownItemProps, Grid, Header, Input, Message, Modal, Segment, Step } from "semantic-ui-react";
 import SwipeableViews from 'react-swipeable-views';
 import Papa from "papaparse";
-import { GridApi } from "ag-grid-community";
 import MaterialTable from "material-table";
 import { FilePond } from "react-filepond";
 import { FilePondFile } from "filepond";
+import { MenuItem, TextField, Button as MTButton, Stepper, StepLabel } from "@material-ui/core";
 
 function getSteps(steps: string[], current: number) {
   return steps.map((value, index) => {
@@ -22,16 +22,16 @@ export default function New() {
   const [step, setStep] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
   const [headers, setHeaders] = useState<object[]>([]);
-  const [options, setOptions] = useState<DropdownItemProps[]>([]);
   const [tableData, setTableData] = useState<object[]>([]);
   const [tableOpen, setTableOpen] = useState(false);
+  const [fileIndex, setFileIndex] = useState(0);
   const steps = ['欢迎', '取个名字', '来点数据', '做些修改', '大功告成'];
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
-  const iniTable = (index: number) => {
-    Papa.parse(files[index], {
+  const iniTable = () => {
+    Papa.parse(files[fileIndex], {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
@@ -48,14 +48,8 @@ export default function New() {
     })
   };
 
-  const updateFiles = (newFiles: FilePondFile[]) => {
+  const updateFiles = (newFiles: FilePondFile[]) =>
     setFiles(newFiles.map(fileItem => fileItem.file));
-    setOptions(newFiles.map((fileItem, index) => ({
-      key: index,
-      value: index,
-      text: fileItem.file.name
-    })));
-  };
 
   const handleSubmit = () => {
     history.push('/dashboard');
@@ -109,13 +103,20 @@ export default function New() {
               <React.Fragment>
                 <Header as='h3' content='现在，你可以添加一些个性化设置。' />
                 <Header as='h4' content='调整数据' dividing />
-                <Form>
-                  <Form.Field inline>
-                    <label>选择一个文件</label>
-                    <Select options={options} />
-                    <Button content='打开' attached='right' />
-                  </Form.Field>
-                </Form>
+                <Message warning>
+                  <Message.Header>注意</Message.Header>
+                  <p>总体而言，我们建议你在专用的编辑器中处理数据，这通常会带来更好的效果。</p>
+                </Message>
+                <TextField select value={fileIndex} variant='outlined' size='small'
+                onChange={(e) => setFileIndex(e.target.value as unknown as number)}
+                style={{ width: '50%' }}>
+                  {files.map((file, index) => 
+                  <MenuItem key={index} value={index}>{file.name}</MenuItem>
+                  )}
+                </TextField>
+                <MTButton variant='contained' disableElevation 
+                onClick={() => iniTable()} size='large' 
+                style={{ marginLeft: '0.5em' }}>打开</MTButton>
               </React.Fragment>
               
               <React.Fragment>
