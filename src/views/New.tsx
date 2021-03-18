@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import { Button, Grid, Header, Input, Message, Modal, Segment, Step } from "semantic-ui-react";
+import { Button, Grid, Header, Input, Message, Segment, Step } from "semantic-ui-react";
 import SwipeableViews from 'react-swipeable-views';
 import Papa from "papaparse";
 import MaterialTable from "material-table";

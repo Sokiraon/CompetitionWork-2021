@@ -1,4 +1,4 @@
-import { IconButton, Icon as MTIcon, Button as MTButton, Typography } from "@material-ui/core";
+import { Icon as MTIcon, Button as MTButton, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Route, useHistory } from "react-router";
 import { Link, Switch } from "react-router-dom";
