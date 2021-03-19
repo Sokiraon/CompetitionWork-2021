@@ -1,20 +1,15 @@
 import { Icon as MTIcon, Button as MTButton, Typography } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import { Route, useHistory } from "react-router";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Route } from "react-router";
 import { Link, Switch } from "react-router-dom";
-import { Button, Confirm, Container, Header, Icon, Menu, Table } from "semantic-ui-react";
-import Auth from "../auth/core";
+import { Button, Container, Header, Icon, Message, Table } from "semantic-ui-react";
+import Auth from "../net/auth";
+import AppMenu from "../components/AppMenu";
+import { selectTaskList } from "../store/taskSlice";
 
 export default function Dashboard() {
-  const auth = Auth.getInstance();
-  const history = useHistory();
-
-  const [logoutConfirm, setLogoutConfirm] = useState(false);
-
-  const tableData = [
-    { status: 'running', name: 'test1', started: '2021-01-01' },
-    { status: 'finished', name: 'test2', started: '2021-01-02' },
-  ];
+  const taskList = useSelector(selectTaskList);
 
   useEffect(() => {
     if (!Auth.getInstance().loginState) {
@@ -24,23 +19,7 @@ export default function Dashboard() {
 
   return (
     <React.Fragment>
-      <Confirm content='确定要退出吗？' open={logoutConfirm}
-      onCancel={() => setLogoutConfirm(false)} onConfirm={() => {
-        auth.logout(); history.push('/');
-      }} cancelButton='取消' confirmButton='确定' />
-      <Menu borderless size='large'>
-        <Container>
-          <Menu.Item header>XSchedule</Menu.Item>
-          <Menu.Item as={Link} to='/dashboard'>控制台</Menu.Item>
-          <Menu.Item as={Link} to='/about'>关于</Menu.Item>
-          <Menu.Menu position='right'>
-            <Menu.Item><Button onClick={() => 
-              setLogoutConfirm(true)
-            }>登出</Button></Menu.Item>
-          </Menu.Menu>
-        </Container>
-      </Menu>
-
+      <AppMenu />
       <Switch>
         <Route exact path='/dashboard'>
           <Container style={{ marginTop: '2em' }}>
@@ -50,7 +29,9 @@ export default function Dashboard() {
                 <Icon name='add' />新任务
               </Button>
             </Header>
-            <Table singleLine striped columns={4} selectable>
+            {taskList.length ? null : <Message content='无任务，请创建新任务' 
+            warning attached='top' />}
+            <Table singleLine striped columns={4} selectable attached>
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell>状态</Table.HeaderCell>
@@ -60,13 +41,13 @@ export default function Dashboard() {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {tableData.map(({ status, name, started}, index) =>
-                  <Table.Row key={index}>
-                    <Table.Cell collapsing>{ status === 'finished' ? 
-                    (<div><Icon name='check' />已完成</div>) :
-                    (<div><Icon name='play' />进行中</div>) }</Table.Cell>
-                    <Table.Cell>{name}</Table.Cell>
-                    <Table.Cell>{started}</Table.Cell>
+                {taskList.map(({ running, name, startTime}) =>
+                  <Table.Row key={name} positive={!running} warning={running}>
+                    <Table.Cell collapsing>{ running ? 
+                    (<div><Icon name='play' />进行中</div>) :
+                    (<div><Icon name='check' />已完成</div>) }</Table.Cell>
+                    <Table.Cell content={name} />
+                    <Table.Cell content={startTime} />
                     <Table.Cell textAlign='right'>
                       <MTButton component={Link} to={'/dashboard/' + name}
                       endIcon={<MTIcon>arrow_forward</MTIcon>} size='large'>

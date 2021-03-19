@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 import { Button, Form, Grid, Header, Message, Segment } from "semantic-ui-react";
-import Auth from "../auth/core";
+import Auth from "../net/auth";
 
 export default function Login() {
   useEffect(() => {

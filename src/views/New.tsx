@@ -9,14 +9,8 @@ import { FilePondFile } from "filepond";
 import { MenuItem, TextField, Button as MTButton, Slide, Dialog, AppBar, Toolbar, IconButton, Icon, Typography, makeStyles, Theme, createStyles } from "@material-ui/core";
 import localization from '../localization/MaterialTable';
 import { TransitionProps } from "@material-ui/core/transitions/transition";
-
-function getSteps(steps: string[], current: number) {
-  return steps.map((value, index) => {
-    if (index < current) return <Step key={index} title={value} completed />
-    else if (index === current) return <Step key={index} title={value} active />
-    else return <Step key={index} title={value} />
-  });
-}
+import { useDispatch } from "react-redux";
+import { addTask } from "../store/taskSlice";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,17 +33,22 @@ const Transition = React.forwardRef(function Transition(
 export default function New() {
   const history = useHistory();
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const [step, setStep] = useState(0);
+  const [name, setName] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [headers, setHeaders] = useState<object[]>([]);
   const [tableData, setTableData] = useState<object[]>([]);
   const [tableOpen, setTableOpen] = useState(false);
   const [fileIndex, setFileIndex] = useState(0);
-  const steps = ['欢迎', '取个名字', '来点数据', '做些修改', '大功告成'];
 
+  const steps = ['欢迎', '取个名字', '来点数据', '做些修改', '大功告成'];
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
+
+  const checkAvailable = () => {
+  };
 
   const iniTable = () => {
     if (files[fileIndex])
@@ -70,10 +69,14 @@ export default function New() {
       });
   };
 
-  const updateFiles = (newFiles: FilePondFile[]) =>
-    setFiles(newFiles.map(fileItem => fileItem.file));
+  const updateFiles = (newFiles: FilePondFile[]) => setFiles(newFiles.map(fileItem => fileItem.file));
 
   const handleSubmit = () => {
+    dispatch(addTask({
+      running: true,
+      name: name,
+      startTime: new Date().toLocaleString('zh-CN'),
+    }));
     history.push('/dashboard');
   };
 
@@ -112,7 +115,10 @@ export default function New() {
       <Grid textAlign='center' style={{ height: '100vh'}} verticalAlign='middle'>
         <Grid.Column width='9'>
           <Step.Group ordered attached='top'>
-            { getSteps(steps, step) }
+            { steps.map((value, index) => 
+            <Step key={value} title={value} completed={index < step}
+            active={index === step}  />
+            ) }
           </Step.Group>
           <Segment stacked textAlign='left' attached>
             <SwipeableViews index={step} style={{ margin: '1em 0' }}>
@@ -129,8 +135,8 @@ export default function New() {
                   <p>任务名不需要很复杂，具有足够辨识度即可。</p>
                 </Message>
                 <Input placeholder='输入任务名' action={
-                  <Button content='检查可用性' color='blue' ></Button>
-                } fluid />
+                  <Button content='检查可用性' color='blue' onClick={checkAvailable}></Button>
+                } fluid onChange={e => setName(e.target.value)} />
               </React.Fragment>
 
               <React.Fragment>
@@ -141,7 +147,7 @@ export default function New() {
 
               <React.Fragment>
                 <Header as='h3' content='现在，你可以按你的意愿做些调整。' />
-                <Header as='h4' content='调整数据' dividing />
+                <Header as='h4' content='检查及修改数据' dividing />
                 <Message warning>
                   <Message.Header>注意</Message.Header>
                   <p>总体而言，我们建议你在专用的编辑器中处理数据，这通常会带来更好的效果。</p>
@@ -156,6 +162,8 @@ export default function New() {
                 <MTButton variant='contained' disableElevation 
                 onClick={() => iniTable()} size='large' 
                 style={{ marginLeft: '0.5em' }}>打开</MTButton>
+
+                <Header as='h4' content='自定义约束' dividing subheader='如果你对工序的前后置关系有自己的要求，请在此添加' />
               </React.Fragment>
               
               <React.Fragment>
