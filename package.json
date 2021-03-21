@@ -19,6 +19,7 @@
     "ag-grid-react": "^25.1.0",
     "axios": "^0.21.1",
     "filepond": "^4.25.3",
+    "filepond-plugin-file-validate-type": "^1.2.6",
     "material-table": "^1.69.2",
     "papaparse": "^5.3.0",
     "react": "^17.0.1",
@@ -31,6 +32,7 @@
     "react-swipeable-views": "^0.13.9",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3",
+    "socket.io-client": "^4.0.0",
     "typescript": "^4.2.3",
     "web-vitals": "^1.1.1"
   },

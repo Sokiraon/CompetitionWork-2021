@@ -3,23 +3,20 @@ import { useHistory } from "react-router";
 import { Button, Grid, Header, Input, Message, Segment, Step } from "semantic-ui-react";
 import SwipeableViews from 'react-swipeable-views';
 import Papa from "papaparse";
-import MaterialTable from "material-table";
 import { FilePond } from "react-filepond";
 import { FilePondFile } from "filepond";
 import { MenuItem, TextField, Button as MTButton, Slide, Dialog, AppBar, Toolbar, IconButton, Icon, Typography, makeStyles, Theme, createStyles } from "@material-ui/core";
-import localization from '../localization/MaterialTable';
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 import { useDispatch } from "react-redux";
 import { addTask } from "../store/taskSlice";
+import { ColDef } from "ag-grid-community";
+import "ag-grid-community/dist/styles/ag-theme-material.css";
+import TableGrid from "../components/TableGrid";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appBar: { position: 'relative' },
-    title: {
-      marginLeft: theme.spacing(2),
-      flex: 1
-    },
-    table: { margin: theme.spacing(2) }
+    title: { marginLeft: theme.spacing(2), flex: 1 },
   }),
 );
 
@@ -38,10 +35,11 @@ export default function New() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [files, setFiles] = useState<File[]>([]);
-  const [headers, setHeaders] = useState<object[]>([]);
+  const [fileIndex, setFileIndex] = useState(0);
+
+  const [colDefs, setColDefs] = useState<ColDef[]>([]);
   const [tableData, setTableData] = useState<object[]>([]);
   const [tableOpen, setTableOpen] = useState(false);
-  const [fileIndex, setFileIndex] = useState(0);
 
   const steps = ['欢迎', '取个名字', '来点数据', '做些修改', '大功告成'];
   const nextStep = () => setStep(step + 1);
@@ -56,14 +54,15 @@ export default function New() {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
-        encoding: 'gbk',
+        encoding: 'utf-8',
         complete: (res) => {
-          let new_headers = [];
           let data = res.data as object[];
           setTableData(data);
-          for (let key in data[0])
-            new_headers.push({ title: key, field: key });
-          setHeaders(new_headers);
+          setColDefs(Object.keys(data[0]).map((value, index) => ({
+            field: value,
+            checkboxSelection: !index,
+            headerCheckboxSelection: !index,
+          })))
           setTableOpen(true);
         }
       });
@@ -82,6 +81,13 @@ export default function New() {
 
   const setTableClose = () => setTableOpen(false);
   const saveTableData = () => {
+    let file = new File([new Blob(
+      [ Papa.unparse(tableData) ],
+      { type: 'text/csv' }
+    )], files[fileIndex].name);
+    let newFiles = [...files];
+    newFiles.splice(fileIndex, 1, file);
+    setFiles(newFiles);
     setTableClose();
   }
 
@@ -89,7 +95,7 @@ export default function New() {
     <React.Fragment>
       <Dialog fullScreen open={tableOpen} onClose={setTableClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
-          <Toolbar>
+          <Toolbar variant='dense'>
             <IconButton edge='start' color='inherit' onClick={setTableClose}>
               <Icon>close</Icon>
             </IconButton>
@@ -99,17 +105,7 @@ export default function New() {
             </MTButton>
           </Toolbar>
         </AppBar>
-        <div className={classes.table}>
-          <MaterialTable columns={headers} data={tableData} title=''
-          options={{
-            selection: true, exportButton: true, 
-            pageSize: 9, pageSizeOptions: [9]
-          }} actions={[{
-            tooltip: '删除所选行',
-            icon: 'delete',
-            onClick: (e, data) => {}
-          }]} localization={localization} />
-        </div>
+        <TableGrid data={tableData} colDefs={colDefs} />
       </Dialog>
 
       <Grid textAlign='center' style={{ height: '100vh'}} verticalAlign='middle'>
@@ -123,9 +119,9 @@ export default function New() {
           <Segment stacked textAlign='left' attached>
             <SwipeableViews index={step} style={{ margin: '1em 0' }}>
               <React.Fragment>
-                <Header as='h1' color='teal' content='欢迎！'
-                subheader='本向导将帮助你新建一个排产任务' />
-                <Header as='h4' content='要继续，请单击“下一步”。' />
+                <Header as='h1' color='teal' content='欢迎！' />
+                <Typography variant='h6'>本向导将帮助你新建一个排产任务。</Typography>
+                <Typography variant='h6'>要继续，请单击“下一步”。</Typography>
               </React.Fragment>
 
               <React.Fragment>
@@ -141,8 +137,8 @@ export default function New() {
 
               <React.Fragment>
                 <Header as='h3' content='接下来，请上传数据文件：' />
-                <FilePond files={files} onupdatefiles={updateFiles} allowMultiple={true}
-                maxFiles={5} labelIdle='拖放到此处 或 <span class="filepond--label-action">手动选择</span>' />
+                <FilePond files={files} onupdatefiles={updateFiles} allowMultiple={true} maxFiles={5}
+                  labelIdle='拖放到此处 或 <span class="filepond--label-action">手动选择</span>' />
               </React.Fragment>
 
               <React.Fragment>
@@ -153,8 +149,8 @@ export default function New() {
                   <p>总体而言，我们建议你在专用的编辑器中处理数据，这通常会带来更好的效果。</p>
                 </Message>
                 <TextField select value={fileIndex} variant='outlined' size='small'
-                onChange={(e) => setFileIndex(e.target.value as unknown as number)}
-                style={{ width: '50%' }} label='选择文件'>
+                  onChange={(e) => setFileIndex(e.target.value as unknown as number)}
+                  style={{ width: '50%' }} label='选择文件'>
                   {files.map((file, index) => 
                   <MenuItem key={index} value={index}>{file.name}</MenuItem>
                   )}
@@ -177,11 +173,11 @@ export default function New() {
             </SwipeableViews>
             <Button.Group widths='2' fluid>
               <Button onClick={() => !step ? 
-              history.push('/dashboard') : prevStep()
+                history.push('/dashboard') : prevStep()
               }>{ !step ? '返回控制台' : '上一步'}</Button>
               <Button.Or />
               <Button positive onClick={() => step < steps.length-1 ?
-              nextStep() : handleSubmit()
+                nextStep() : handleSubmit()
               }>{ step < steps.length-1 ? '下一步' : '提交'}</Button>
             </Button.Group>
           </Segment>

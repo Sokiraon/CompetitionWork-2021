@@ -4,6 +4,7 @@ export interface Task {
   running: boolean,
   name: string,
   startTime: string,
+  result?: object[],
 }
 
 export const taskSlice = createSlice({

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 import { Button, Form, Grid, Header, Message, Segment } from "semantic-ui-react";
 import Auth from "../net/auth";
+import MySocket from "../net/websocket";
 
 export default function Login() {
   useEffect(() => {
@@ -19,6 +21,7 @@ export default function Login() {
   const onSubmit = (data) => {
     setLoading(true);
     Auth.getInstance().loginWithPassword(data.username, data.password).then(() => {
+      MySocket.getInstance();
       history.push('/dashboard');
     }).catch((err) => {
       setLoading(false);
@@ -61,11 +64,9 @@ export default function Login() {
             </Button>
           </Segment>
         </Form>
-        {/*
         <Message>
           没有账号？在这里 <Link to='/signup'>注册</Link>
         </Message>
-         */}
       </Grid.Column>
     </Grid>
   );

@@ -60,7 +60,6 @@ export default function Dashboard() {
             </Table>
           </Container>
         </Route>
-        <Route exact path='/dashboard/:name' />
       </Switch>
     </React.Fragment>
   );
