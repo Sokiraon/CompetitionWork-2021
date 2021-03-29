@@ -5,7 +5,7 @@ import SwipeableViews from 'react-swipeable-views';
 import Papa from "papaparse";
 import { FilePond } from "react-filepond";
 import { FilePondFile } from "filepond";
-import { MenuItem, TextField, Button as MTButton, Slide, Dialog, AppBar, Toolbar, IconButton, Icon, Typography, makeStyles, Theme, createStyles } from "@material-ui/core";
+import { MenuItem, TextField, Button as MTButton, Slide, Dialog, AppBar, Toolbar, IconButton, Icon, Typography, makeStyles, Theme, createStyles, Paper } from "@material-ui/core";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 import { useDispatch } from "react-redux";
 import { addTask } from "../store/taskSlice";
@@ -94,17 +94,19 @@ export default function New() {
   return (
     <React.Fragment>
       <Dialog fullScreen open={tableOpen} onClose={setTableClose} TransitionComponent={Transition}>
-        <AppBar className={classes.appBar}>
-          <Toolbar variant='dense'>
-            <IconButton edge='start' color='inherit' onClick={setTableClose}>
-              <Icon>close</Icon>
-            </IconButton>
-            <Typography variant='h6' className={classes.title}>查看及修改数据</Typography>
-            <MTButton color='inherit' onClick={saveTableData}>
-              <Typography variant='body1'>保存</Typography>
-            </MTButton>
-          </Toolbar>
-        </AppBar>
+        <Paper>
+          <AppBar className={classes.appBar} color='inherit' elevation={0}>
+            <Toolbar variant='dense'>
+              <IconButton edge='start' color='inherit' onClick={setTableClose}>
+                <Icon>close</Icon>
+              </IconButton>
+              <Typography variant='h6' className={classes.title}>查看及修改数据</Typography>
+              <MTButton color='inherit' onClick={saveTableData}>
+                <Typography variant='body1'>保存</Typography>
+              </MTButton>
+            </Toolbar>
+          </AppBar>
+        </Paper>
         <TableGrid data={tableData} colDefs={colDefs} />
       </Dialog>
 

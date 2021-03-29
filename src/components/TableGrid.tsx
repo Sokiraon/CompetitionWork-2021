@@ -1,13 +1,15 @@
 import { Box, Button, createStyles, Icon, InputAdornment, makeStyles, Paper, TextField, Theme } from "@material-ui/core";
 import { ColDef, GridApi } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    table: { 
+    root: { background: '#f7f7f7' },
+    table: {
       margin: theme.spacing(2),
       marginTop: 0,
+      marginBottom: theme.spacing(3),
       width: 'auto',
       height: '100%'
     },
@@ -76,10 +78,6 @@ export default function TableGrid(props: TableGridProps) {
       remove: gridApi.getSelectedRows()
     });
   }
-
-  useEffect(() => {
-
-  });
 
   return (
     <React.Fragment>
