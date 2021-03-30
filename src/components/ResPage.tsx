@@ -1,17 +1,79 @@
-import { Grid, Paper, Tab, Tabs } from "@material-ui/core";
+import {
+  Drawer,
+  Grid,
+  Icon,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+  withStyles,
+} from "@material-ui/core";
+import MuiAccordion from "@material-ui/core/Accordion";
+import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
+import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
 import { useState } from "react";
 import { TaskResult } from "../store/taskSlice";
 import Timeline from "react-calendar-timeline";
 import { Chrono } from "react-chrono";
+import React from "react";
 
 interface ResPageProps {
   data: TaskResult[];
 }
 
+const Accordion = withStyles({
+  root: {
+    border: "1px solid rgba(0, 0, 0, .125)",
+    boxShadow: "none",
+    "&:not(:last-child)": {
+      borderBottom: 0,
+    },
+    "&:before": {
+      display: "none",
+    },
+    "&$expanded": {
+      margin: "auto",
+    },
+  },
+  expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+  root: {
+    marginBottom: -1,
+    minHeight: 56,
+    "&$expanded": {
+      minHeight: 56,
+    },
+  },
+  content: {
+    "&$expanded": {
+      margin: "12px 0",
+    },
+  },
+  expanded: {},
+})(MuiAccordionSummary);
+
+const AccordionDetails = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(1),
+    marginLeft: theme.spacing(2),
+    marginBottom: theme.spacing(1)
+  },
+}))(MuiAccordionDetails);
+
 export default function ResPage(props: ResPageProps) {
   const { data } = props;
-  const [tab, setTab] = useState(0);
-  const onTabChange = (e: React.ChangeEvent<{}>, val: number) => setTab(val);
+
+  const [active, setActive] = useState("panel1");
+  const [expanded, setExpanded] = useState<string | boolean>("panel1");
+  const handleChange = (panel: string) => (
+    e: React.ChangeEvent<{}>,
+    newVal: boolean
+  ) => {
+    setActive(panel);
+    setExpanded(newVal ? panel : false);
+  };
 
   const getNumber = (str: string) => {
     str = str.split("_")[1];
@@ -47,23 +109,34 @@ export default function ResPage(props: ResPageProps) {
     }));
 
   return (
-    <Grid container spacing={0}>
+    <Grid container spacing={1}>
       <Grid item xs={2}>
         <Paper square>
-          <Tabs
-            value={tab}
-            indicatorColor="primary"
-            textColor="primary"
-            onChange={onTabChange}
-            orientation="vertical"
+          <Accordion
+            square
+            expanded={expanded === "panel1"}
+            onChange={handleChange("panel1")}
+            style={{ paddingTop: 8 }}
           >
-            <Tab label="甘特图" />
-            <Tab label="时间线" />
-          </Tabs>
+            <AccordionSummary expandIcon={<Icon>expand_more</Icon>}>
+              <Typography>甘特图</Typography>
+            </AccordionSummary>
+            <AccordionDetails>Gantt chart config</AccordionDetails>
+          </Accordion>
+          <Accordion
+            square
+            expanded={expanded === "panel2"}
+            onChange={handleChange("panel2")}
+          >
+            <AccordionSummary expandIcon={<Icon>expand_more</Icon>}>
+              <Typography>时间线</Typography>
+            </AccordionSummary>
+            <AccordionDetails>Timeline config</AccordionDetails>
+          </Accordion>
         </Paper>
       </Grid>
       <Grid item xs={10}>
-        {tab === 0 ? (
+        {active === "panel1" ? (
           <Timeline
             groups={getGroups(data)}
             items={getChartData(data)}
