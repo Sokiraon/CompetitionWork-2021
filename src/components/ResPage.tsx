@@ -1,21 +1,12 @@
-import {
-  Drawer,
-  Grid,
-  Icon,
-  Paper,
-  Tab,
-  Tabs,
-  Typography,
-  withStyles,
-} from "@material-ui/core";
+import { Grid, Icon, Paper, Typography, withStyles } from "@material-ui/core";
 import MuiAccordion from "@material-ui/core/Accordion";
 import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
 import MuiAccordionDetails from "@material-ui/core/AccordionDetails";
 import { useState } from "react";
 import { TaskResult } from "../store/taskSlice";
-import Timeline from "react-calendar-timeline";
 import { Chrono } from "react-chrono";
 import React from "react";
+import Gantt from "./Gantt";
 
 interface ResPageProps {
   data: TaskResult[];
@@ -58,7 +49,7 @@ const AccordionDetails = withStyles((theme) => ({
   root: {
     padding: theme.spacing(1),
     marginLeft: theme.spacing(2),
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
 }))(MuiAccordionDetails);
 
@@ -137,12 +128,9 @@ export default function ResPage(props: ResPageProps) {
       </Grid>
       <Grid item xs={10}>
         {active === "panel1" ? (
-          <Timeline
-            groups={getGroups(data)}
-            items={getChartData(data)}
-            defaultTimeStart={new Date("2021/12/1 9:00")}
-            defaultTimeEnd={new Date("2021/12/1 14:00")}
-          />
+          <div style={{ height: "100%" }}>
+            <Gantt tasks={data} />
+          </div>
         ) : (
           <div style={{ width: "100%", height: "950px" }}>
             <Chrono
