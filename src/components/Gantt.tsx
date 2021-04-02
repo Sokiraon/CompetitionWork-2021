@@ -2,6 +2,8 @@ import { gantt } from 'dhtmlx-gantt';
 import { useEffect, useState } from 'react';
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css';
 import { TaskResult } from '../store/taskSlice';
+import initializeGSTC from './GanttData';
+import { GSTCResult } from 'gantt-schedule-timeline-calendar';
 
 interface GanttProps {
   tasks: TaskResult[];
@@ -21,6 +23,7 @@ function getGanttData(tasks: TaskResult[]) {
 export default function Gantt(props: GanttProps) {
   const { tasks } = props;
   const [container, setContainer] = useState<HTMLDivElement | null>();
+  let state: any, gstc: any;
 
   useEffect(() => {
     gantt.parse(getGanttData(tasks));
@@ -30,7 +33,7 @@ export default function Gantt(props: GanttProps) {
   return (
     <div
       ref={(element) => {
-        if (element) gantt.init(element);
+        if (element) initializeGSTC(element, state, gstc);
       }}
       style={{ width: '100%', height: '100%' }} 
     />
