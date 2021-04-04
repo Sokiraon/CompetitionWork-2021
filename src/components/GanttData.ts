@@ -1,11 +1,12 @@
-import GSTC from "gantt-schedule-timeline-calendar";
+import GSTC, { GSTCResult, Items, Rows, Row } from "gantt-schedule-timeline-calendar";
 import 'gantt-schedule-timeline-calendar/dist/style.css';
+import DeepState from 'gantt-schedule-timeline-calendar/node_modules/deep-state-observer';
 
 function generateRows() {
   /**
    * @type { import("gantt-schedule-timeline-calendar").Rows }
    */
-  const rows = {};
+  const rows: Rows = {};
   for (let i = 0; i < 100; i++) {
     const id = GSTC.api.GSTCID(i.toString());
     rows[id] = {
@@ -20,7 +21,7 @@ function generateItems() {
   /**
    * @type { import("gantt-schedule-timeline-calendar").Items }
    */
-  const items = {};
+  const items: Items = {};
   // @ts-ignore
   let start = GSTC.api.date().startOf('day').subtract(6, 'day');
   for (let i = 0; i < 100; i++) {
@@ -40,7 +41,7 @@ function generateItems() {
   return items;
 }
 
-function initializeGSTC(element, state, gstc) {
+function initializeGSTC(element: HTMLDivElement, state: DeepState, gstc: GSTCResult) {
   /**
    * @type { import("gantt-schedule-timeline-calendar").Config }
    */
@@ -53,7 +54,6 @@ function initializeGSTC(element, state, gstc) {
           [GSTC.api.GSTCID('id')]: {
             id: GSTC.api.GSTCID('id'),
             width: 60,
-            data: ({ row }) => GSTC.api.sourceID(row.id),
             header: {
               content: 'ID',
             },
@@ -75,7 +75,6 @@ function initializeGSTC(element, state, gstc) {
     },
   };
 
-  state = GSTC.api.stateFromConfig(config);
 
   gstc = GSTC({
     element,

@@ -1,15 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface TaskResult {
-  order_id: string;
-  product_id: string;
-  product_seq: number;
-  semi_product_id: string;
+  resource_id: string;
+  start: string;
+  end: string;
   process_id: string;
-  start_time: string;
-  end_time: string;
-  resource_types: string;
-  resource_demands: string;
+  amount: number;
 }
 
 export interface Task {
