@@ -27,6 +27,7 @@ import {
 import { selectTaskResult, TaskResult } from "../store/taskSlice";
 import 'react-calendar-timeline/lib/Timeline.css';
 import ResPage from "../components/ResPage";
+import sampleData from "../components/SampleData";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,7 +65,7 @@ export default function Task() {
 
   return (
     <React.Fragment>
-      <Paper>
+      <Paper style={{ marginBottom: 8 }}>
         <AppBar position="static" color="inherit" elevation={0}>
           <Toolbar variant="dense">
             <IconButton
@@ -100,18 +101,7 @@ export default function Task() {
           <Button onClick={parse}>Parse</Button>
         </Route>
         <Route path="/dashboard/:name/result">
-          <ResPage data={data} />
-          {/* 
-          <Chart
-            width={"100%"}
-            height={"600px"}
-            chartType="Gantt"
-            data={genChartData(data)}
-            style={{
-              overflow: 'scroll'
-            }}
-          />
-           */}
+          <ResPage data={sampleData} />
         </Route>
         <Route path="/dashboard/:name/add">
           <p>This ensures the add feature.</p>

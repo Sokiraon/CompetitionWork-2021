@@ -1,59 +1,91 @@
-import { Grid, Icon, Paper, Typography } from "@material-ui/core";
-import { useState } from "react";
+import {
+  Button,
+  Checkbox,
+  createStyles,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Grid,
+  Icon,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  makeStyles,
+  Paper,
+  TextField,
+  Theme,
+} from "@material-ui/core";
+import React, { useState } from "react";
 import { TaskResult } from "../store/taskSlice";
-import { Chrono } from "react-chrono";
-import React from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from "moment";
-import { IAccordion, IAccordionSummary, IAccordionDetails } from "./IAccordion";
 import Gantt from "./Gantt";
+import Calendar from "./Calendar";
+import ITimeline from "./ITimeline";
 
 interface ResPageProps {
-  data: TaskResult[];
+  data: TaskResult;
 }
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    formControl: {
+      margin: theme.spacing(2),
+      marginBottom: 0,
+    },
+    timePicker: {
+      width: "200px",
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+    },
+    button: {
+      margin: theme.spacing(2),
+    },
+  })
+);
 
 export default function ResPage(props: ResPageProps) {
   const { data } = props;
-  const localizer = momentLocalizer(moment);
+  const classes = useStyles();
+  const [disabled, setDisabled] = useState(true);
 
   const [active, setActive] = useState("panel1");
-  const handleChange = (panel: string) => (
-    e: React.ChangeEvent<{}>,
-    newVal: boolean
-  ) => setActive(panel);
+  const handleChange = (panel: string) => () => setActive(panel);
 
-  const getTimeLine = (data: TaskResult[]) =>
-    data.map((row) => ({
-      title: row.start,
-      cardTitle: row.resource_id,
-      cardSubtitle: row.process_id,
-    }));
+  const [check, setCheck] = useState({
+    机床: true,
+    人员: false,
+    设备: false,
+  });
+  const { 机床, 人员, 设备 } = check;
+  const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCheck({ ...check, [e.target.name]: e.target.checked });
+    setDisabled(false);
+  };
 
   const getPanelContent = () => {
     switch (active) {
       case "panel1":
         return (
-          <div>
+          <Paper style={{ height: '700px' }}>
             <Gantt tasks={data} />
-          </div>
+          </Paper>
         );
       case "panel2":
         return (
           <Paper style={{ height: "700px", overflowY: "scroll" }}>
-            <Calendar date={new Date()} events={[]} localizer={localizer} />
+            <Calendar tasks={data} />
           </Paper>
         );
       case "panel3":
         return (
-          <div style={{ height: "700px" }}>
-            <Chrono
-              mode="VERTICAL_ALTERNATING"
-              items={getTimeLine(data)}
-              scrollable
-            />
-          </div>
-        );
+          <Paper style={{ height: "700px", overflowY: "scroll" }}>
+            <ITimeline tasks={data} type="机床" />
+          </Paper>
+        )
     }
   };
 
@@ -61,37 +93,94 @@ export default function ResPage(props: ResPageProps) {
     <Grid container spacing={1}>
       <Grid item xs={2}>
         <Paper square>
-          <IAccordion
-            square
-            expanded={active === "panel1"}
-            onChange={handleChange("panel1")}
-            style={{ paddingTop: 8 }}
-          >
-            <IAccordionSummary expandIcon={<Icon>expand_more</Icon>}>
-              <Typography>甘特图</Typography>
-            </IAccordionSummary>
-            <IAccordionDetails>Gantt chart config</IAccordionDetails>
-          </IAccordion>
-          <IAccordion
-            square
-            expanded={active === "panel2"}
-            onChange={handleChange("panel2")}
-          >
-            <IAccordionSummary expandIcon={<Icon>expand_more</Icon>}>
-              <Typography>日程表</Typography>
-            </IAccordionSummary>
-            <IAccordionDetails>Calendar config</IAccordionDetails>
-          </IAccordion>
-          <IAccordion
-            square
-            expanded={active === "panel3"}
-            onChange={handleChange("panel3")}
-          >
-            <IAccordionSummary expandIcon={<Icon>expand_more</Icon>}>
-              <Typography>时间线</Typography>
-            </IAccordionSummary>
-            <IAccordionDetails>Timeline config</IAccordionDetails>
-          </IAccordion>
+          <List component="nav">
+            <ListItem button onClick={handleChange("panel1")}>
+              <ListItemIcon>
+                <Icon>bar_chart</Icon>
+              </ListItemIcon>
+              <ListItemText primary="甘特图" />
+            </ListItem>
+            <ListItem button onClick={handleChange("panel2")}>
+              <ListItemIcon>
+                <Icon>event_note</Icon>
+              </ListItemIcon>
+              <ListItemText primary="日程表" />
+            </ListItem>
+            <ListItem button onClick={handleChange("panel3")}>
+              <ListItemIcon>
+                <Icon>timeline</Icon>
+              </ListItemIcon>
+              <ListItemText primary="时间线" />
+            </ListItem>
+            <Divider />
+            <FormControl component="fieldset" className={classes.formControl}>
+              <FormLabel component="legend">筛选资源类型</FormLabel>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={机床}
+                      onChange={handleCheck}
+                      name="机床"
+                    />
+                  }
+                  label="机床"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={人员}
+                      onChange={handleCheck}
+                      name="人员"
+                    />
+                  }
+                  label="人员"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={设备}
+                      onChange={handleCheck}
+                      name="设备"
+                    />
+                  }
+                  label="设备"
+                />
+              </FormGroup>
+            </FormControl>
+            <FormControl component="fieldset" className={classes.formControl}>
+              <FormLabel component="legend">限定时间范围</FormLabel>
+              <TextField
+                label="最早开始时间"
+                type="datetime-local"
+                defaultValue="2020-12-01T09:00"
+                className={classes.timePicker}
+                onChange={() => setDisabled(false)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                label="最晚开始时间"
+                type="datetime-local"
+                className={classes.timePicker}
+                onChange={() => setDisabled(false)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </FormControl>
+            <Button
+              variant="contained"
+              disableElevation
+              color="primary"
+              size="large"
+              disabled={disabled}
+              className={classes.button}
+            >
+              应用
+            </Button>
+          </List>
         </Paper>
       </Grid>
       <Grid item xs={10}>

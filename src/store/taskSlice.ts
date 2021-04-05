@@ -1,12 +1,23 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-export interface TaskResult {
-  resource_id: string;
+interface Process {
   start: string;
   end: string;
   process_id: string;
   amount: number;
 }
+
+export type TaskResult = {
+  机床?: {
+    [name: string]: Process[];
+  };
+  人员?: {
+    [name: string]: Process[];
+  }
+  设备?: {
+    [name: string]: Process[];
+  }
+};
 
 export interface Task {
   running: boolean;
@@ -18,11 +29,11 @@ export interface Task {
 interface State {
   tasks: {
     taskList: Task[];
-  }
+  };
 }
 
 export const taskSlice = createSlice({
-  name: 'tasks',
+  name: "tasks",
   initialState: {
     taskList: [] as Task[],
   },
@@ -33,26 +44,23 @@ export const taskSlice = createSlice({
     updateTaskStatus: (state, action) => {
       let payload = action.payload;
       for (let task of state.taskList) {
-        if (task.name === payload.name)
-          task.running = payload.running;
+        if (task.name === payload.name) task.running = payload.running;
       }
     },
     setResult: (state, action) => {
       let payload = action.payload;
       for (let task of state.taskList) {
-        if (task.name === payload.name)
-          task.result = payload.result;
+        if (task.name === payload.name) task.result = payload.result;
       }
     },
-  }
+  },
 });
 
 export const { addTask } = taskSlice.actions;
 export const selectTaskList = (state: State) => state.tasks.taskList;
 export const selectTaskResult = (state: State) => (name: string) => {
   for (let task of state.tasks.taskList) {
-    if (task.name === name)
-      return task.result;
+    if (task.name === name) return task.result;
   }
-}
+};
 export default taskSlice.reducer;

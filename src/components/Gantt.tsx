@@ -1,72 +1,80 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import "gantt-schedule-timeline-calendar/dist/style.css";
 import { TaskResult } from "../store/taskSlice";
 import DeepState from "gantt-schedule-timeline-calendar/node_modules/deep-state-observer";
-import GSTC, { Config, GSTCResult } from "gantt-schedule-timeline-calendar";
+import GSTC, {
+  Config,
+  GSTCResult,
+  Item,
+  Row,
+} from "gantt-schedule-timeline-calendar";
 
 interface GanttProps {
-  tasks: TaskResult[];
+  tasks: TaskResult;
 }
+
+let gstc: GSTCResult, ganttState: DeepState;
 
 export default function Gantt(props: GanttProps) {
   const { tasks } = props;
-  const [ganttState, setGanttState] = useState<DeepState>();
+  const callback = useCallback((element) => {
+    if (element) {
+      ganttState = GSTC.api.stateFromConfig(config);
+      gstc = GSTC({
+        element,
+        state: ganttState,
+      });
+    }
+  }, []);
 
   const genRows = () => {
-    return [
-      { id: "1", label: "Row 1" },
-      { id: "2", label: "Row 2" },
-    ];
+    let res: Row[] = [];
+    for (const [key, value] of Object.entries(tasks)) {
+      if (value) {
+        for (let i in value) {
+          res.push({
+            id: i,
+            label: i,
+          });
+        }
+      }
+    }
+    console.log(res);
+    return res;
   };
 
   const genItems = () => {
-    return [
-      {
-        id: "1",
-        label: "Item 1",
-        rowId: "1",
-        time: {
-          start: new Date("2020-01-03 9:00").valueOf(),
-          end: new Date("2020-01-03 9:05").valueOf(),
-        },
-      },
-      {
-        id: "2",
-        label: "Item 2",
-        rowId: "1",
-        time: {
-          start: new Date("2020-01-03 9:30").valueOf(),
-          end: new Date("2020-01-03 10:00").valueOf(),
-        },
-      },
-      {
-        id: "3",
-        label: "Item 3",
-        rowId: "2",
-        time: {
-          start: GSTC.api.date("2020-01-15").startOf("day").valueOf(),
-          end: GSTC.api.date("2020-01-20").endOf("day").valueOf(),
-        },
-      },
-    ];
+    let res: Item[] = [];
+    for (const [key, value] of Object.entries(tasks)) {
+      if (value) {
+        for (let i in value) {
+          value[i].forEach((value, index) => {
+            let label = i + index.toString();
+            res.push({
+              id: label,
+              label: "",
+              rowId: i,
+              time: {
+                start: new Date(value.start).valueOf(),
+                end: new Date(value.end).valueOf(),
+              },
+            });
+          });
+        }
+      }
+    }
+    console.log(res);
+    return res;
   };
 
   const columns = [
-    {
-      id: "id",
-      label: "ID",
-      data: {},
-      header: {
-        content: "ID",
-      },
-    },
     {
       id: "label",
       data: "label",
       sortable: "label",
       header: {
-        content: "Label",
+        content: "资源名称",
       },
     },
   ];
@@ -83,26 +91,11 @@ export default function Gantt(props: GanttProps) {
     chart: {
       items: GSTC.api.fromArray(genItems()),
       time: {
-        leftGlobal: new Date('2020-12-01').getTime(),
+        leftGlobal: new Date("2020-12-01").getTime(),
         zoom: 17,
-      }
+      },
     },
   };
 
-  return (
-    <div
-      ref={(element) => {
-        if (element) {
-          if (!ganttState) setGanttState(GSTC.api.stateFromConfig(config));
-          else {
-            GSTC({
-              element,
-              state: ganttState,
-            });
-          }
-        }
-      }}
-      style={{ width: "100%", height: "100%" }}
-    />
-  );
+  return <div ref={callback} style={{ width: "100%", height: "100%" }} />;
 }
