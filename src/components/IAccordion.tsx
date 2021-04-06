@@ -2,7 +2,6 @@ import { Accordion, AccordionDetails, AccordionSummary, withStyles } from "@mate
 
 export const IAccordion = withStyles({
   root: {
-    border: "1px solid rgba(0, 0, 0, .125)",
     boxShadow: "none",
     "&:not(:last-child)": {
       borderBottom: 0,

@@ -25,7 +25,6 @@ import {
   Switch,
 } from "react-router-dom";
 import { selectTaskResult, TaskResult } from "../store/taskSlice";
-import 'react-calendar-timeline/lib/Timeline.css';
 import ResPage from "../components/ResPage";
 import sampleData from "../components/SampleData";
 

@@ -9,22 +9,21 @@ import {
   FormLabel,
   Grid,
   Icon,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   makeStyles,
   Paper,
+  Radio,
+  RadioGroup,
   TextField,
   Theme,
+  Typography,
 } from "@material-ui/core";
 import React, { useState } from "react";
 import { TaskResult } from "../store/taskSlice";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import moment from "moment";
 import Gantt from "./Gantt";
 import Calendar from "./Calendar";
 import ITimeline from "./ITimeline";
+import { IAccordion, IAccordionDetails, IAccordionSummary } from "./IAccordion";
 
 interface ResPageProps {
   data: TaskResult;
@@ -66,26 +65,37 @@ export default function ResPage(props: ResPageProps) {
     setDisabled(false);
   };
 
+  const [radio, setRadio] = useState("机床");
+  const handleRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRadio(e.target.value);
+    setDisabled(false);
+  };
+
+  const [startBegin, setStartBegin] = useState("");
+  const onBeginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStartBegin(e.target.value);
+    setDisabled(false);
+  };
+  const [startEnd, setStartEnd] = useState("");
+  const onEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStartEnd(e.target.value);
+    setDisabled(false);
+  };
+
   const getPanelContent = () => {
     switch (active) {
       case "panel1":
-        return (
-          <Paper style={{ height: '700px' }}>
-            <Gantt tasks={data} />
-          </Paper>
-        );
-      case "panel2":
         return (
           <Paper style={{ height: "700px", overflowY: "scroll" }}>
             <Calendar tasks={data} />
           </Paper>
         );
-      case "panel3":
+      case "panel2":
         return (
           <Paper style={{ height: "700px", overflowY: "scroll" }}>
             <ITimeline tasks={data} type="机床" />
           </Paper>
-        )
+        );
     }
   };
 
@@ -93,94 +103,120 @@ export default function ResPage(props: ResPageProps) {
     <Grid container spacing={1}>
       <Grid item xs={2}>
         <Paper square>
-          <List component="nav">
-            <ListItem button onClick={handleChange("panel1")}>
-              <ListItemIcon>
-                <Icon>bar_chart</Icon>
-              </ListItemIcon>
-              <ListItemText primary="甘特图" />
-            </ListItem>
-            <ListItem button onClick={handleChange("panel2")}>
-              <ListItemIcon>
-                <Icon>event_note</Icon>
-              </ListItemIcon>
-              <ListItemText primary="日程表" />
-            </ListItem>
-            <ListItem button onClick={handleChange("panel3")}>
-              <ListItemIcon>
-                <Icon>timeline</Icon>
-              </ListItemIcon>
-              <ListItemText primary="时间线" />
-            </ListItem>
-            <Divider />
-            <FormControl component="fieldset" className={classes.formControl}>
-              <FormLabel component="legend">筛选资源类型</FormLabel>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={机床}
-                      onChange={handleCheck}
-                      name="机床"
-                    />
-                  }
-                  label="机床"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={人员}
-                      onChange={handleCheck}
-                      name="人员"
-                    />
-                  }
-                  label="人员"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={设备}
-                      onChange={handleCheck}
-                      name="设备"
-                    />
-                  }
-                  label="设备"
-                />
-              </FormGroup>
-            </FormControl>
-            <FormControl component="fieldset" className={classes.formControl}>
-              <FormLabel component="legend">限定时间范围</FormLabel>
-              <TextField
-                label="最早开始时间"
-                type="datetime-local"
-                defaultValue="2020-12-01T09:00"
-                className={classes.timePicker}
-                onChange={() => setDisabled(false)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <TextField
-                label="最晚开始时间"
-                type="datetime-local"
-                className={classes.timePicker}
-                onChange={() => setDisabled(false)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </FormControl>
-            <Button
-              variant="contained"
-              disableElevation
-              color="primary"
-              size="large"
-              disabled={disabled}
-              className={classes.button}
-            >
-              应用
-            </Button>
-          </List>
+          <IAccordion
+            square
+            expanded={active === "panel1"}
+            onChange={handleChange("panel1")}
+          >
+            <IAccordionSummary expandIcon={<Icon>expand_more</Icon>}>
+              <Icon style={{ marginRight: 4 }}>event_note</Icon>
+              <Typography>日程表</Typography>
+            </IAccordionSummary>
+            <IAccordionDetails>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">筛选资源类型</FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={机床}
+                        onChange={handleCheck}
+                        name="机床"
+                      />
+                    }
+                    label="机床"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={人员}
+                        onChange={handleCheck}
+                        name="人员"
+                      />
+                    }
+                    label="人员"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={设备}
+                        onChange={handleCheck}
+                        name="设备"
+                      />
+                    }
+                    label="设备"
+                  />
+                </FormGroup>
+              </FormControl>
+            </IAccordionDetails>
+          </IAccordion>
+          <Divider />
+          <IAccordion
+            square
+            expanded={active === "panel2"}
+            onChange={handleChange("panel2")}
+          >
+            <IAccordionSummary expandIcon={<Icon>expand_more</Icon>}>
+              <Icon style={{ marginRight: 4 }}>timeline</Icon>
+              <Typography>时间线</Typography>
+            </IAccordionSummary>
+            <IAccordionDetails>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">筛选资源类型</FormLabel>
+                <RadioGroup value={radio} onChange={handleRadio}>
+                  <FormControlLabel
+                    value="机床"
+                    control={<Radio />}
+                    label="机床"
+                  />
+                  <FormControlLabel
+                    value="人员"
+                    control={<Radio />}
+                    label="人员"
+                  />
+                  <FormControlLabel
+                    value="设备"
+                    control={<Radio />}
+                    label="设备"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </IAccordionDetails>
+          </IAccordion>
+          <Divider />
+          <FormControl component="fieldset" className={classes.formControl}>
+            <FormLabel component="legend">限定时间范围</FormLabel>
+            <TextField
+              label="最早开始时间"
+              type="datetime-local"
+              defaultValue="2020-12-01T09:00"
+              className={classes.timePicker}
+              onChange={onBeginChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              label="最晚开始时间"
+              type="datetime-local"
+              defaultValue="2020-12-01T11:00"
+              className={classes.timePicker}
+              onChange={onEndChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </FormControl>
+          <Button
+            variant="contained"
+            disableElevation
+            color="primary"
+            size="large"
+            disabled={disabled}
+            className={classes.button}
+          >
+            应用
+          </Button>
         </Paper>
       </Grid>
       <Grid item xs={10}>
