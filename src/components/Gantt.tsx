@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import "gantt-schedule-timeline-calendar/dist/style.css";
 import { TaskResult } from "../store/taskSlice";
 import DeepState from "gantt-schedule-timeline-calendar/node_modules/deep-state-observer";

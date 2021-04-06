@@ -44,7 +44,8 @@ const sampleData = {
         amount: 1,
       },
     ]
-  }
+  },
+  "设备": {}
 };
 
 export default sampleData;

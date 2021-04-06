@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export type ResourceType = "机床" | "人员" | "设备";
+
 interface Process {
   start: string;
   end: string;
@@ -8,15 +10,9 @@ interface Process {
 }
 
 export type TaskResult = {
-  机床?: {
+  [type in ResourceType]?: {
     [name: string]: Process[];
   };
-  人员?: {
-    [name: string]: Process[];
-  }
-  设备?: {
-    [name: string]: Process[];
-  }
 };
 
 export interface Task {

@@ -23,17 +23,12 @@ export const IAccordionSummary = withStyles({
       minHeight: 56,
     },
   },
-  content: {
-    "&$expanded": {
-      margin: "12px 0",
-    },
-  },
-  expanded: {},
 })(AccordionSummary);
 
 export const IAccordionDetails = withStyles((theme) => ({
   root: {
     padding: theme.spacing(1),
+    paddingTop: 0,
     marginLeft: theme.spacing(2),
     marginBottom: theme.spacing(1),
   },

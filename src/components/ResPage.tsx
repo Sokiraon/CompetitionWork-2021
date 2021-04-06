@@ -18,9 +18,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useState } from "react";
-import { TaskResult } from "../store/taskSlice";
+import { ResourceType, TaskResult } from "../store/taskSlice";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import Gantt from "./Gantt";
 import Calendar from "./Calendar";
 import ITimeline from "./ITimeline";
 import { IAccordion, IAccordionDetails, IAccordionSummary } from "./IAccordion";
@@ -31,6 +30,9 @@ interface ResPageProps {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    icon: {
+      marginRight: theme.spacing(2)
+    },
     formControl: {
       margin: theme.spacing(2),
       marginBottom: 0,
@@ -41,7 +43,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(1),
     },
     button: {
-      margin: theme.spacing(2),
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2)
     },
   })
 );
@@ -65,9 +68,9 @@ export default function ResPage(props: ResPageProps) {
     setDisabled(false);
   };
 
-  const [radio, setRadio] = useState("机床");
+  const [radio, setRadio] = useState<ResourceType>("机床");
   const handleRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRadio(e.target.value);
+    setRadio(e.target.value as ResourceType);
     setDisabled(false);
   };
 
@@ -87,13 +90,13 @@ export default function ResPage(props: ResPageProps) {
       case "panel1":
         return (
           <Paper style={{ height: "700px", overflowY: "scroll" }}>
-            <Calendar tasks={data} />
+            <Calendar tasks={data} types={check} />
           </Paper>
         );
       case "panel2":
         return (
           <Paper style={{ height: "700px", overflowY: "scroll" }}>
-            <ITimeline tasks={data} type="机床" />
+            <ITimeline tasks={data} type={radio} />
           </Paper>
         );
     }
@@ -109,12 +112,12 @@ export default function ResPage(props: ResPageProps) {
             onChange={handleChange("panel1")}
           >
             <IAccordionSummary expandIcon={<Icon>expand_more</Icon>}>
-              <Icon style={{ marginRight: 4 }}>event_note</Icon>
+              <Icon className={classes.icon}>event_note</Icon>
               <Typography>日程表</Typography>
             </IAccordionSummary>
             <IAccordionDetails>
               <FormControl component="fieldset">
-                <FormLabel component="legend">筛选资源类型</FormLabel>
+                <Typography variant='body1'>筛选资源类型</Typography>
                 <FormGroup>
                   <FormControlLabel
                     control={
@@ -157,12 +160,12 @@ export default function ResPage(props: ResPageProps) {
             onChange={handleChange("panel2")}
           >
             <IAccordionSummary expandIcon={<Icon>expand_more</Icon>}>
-              <Icon style={{ marginRight: 4 }}>timeline</Icon>
+              <Icon className={classes.icon}>timeline</Icon>
               <Typography>时间线</Typography>
             </IAccordionSummary>
             <IAccordionDetails>
               <FormControl component="fieldset">
-                <FormLabel component="legend">筛选资源类型</FormLabel>
+                <Typography variant='body1'>筛选资源类型</Typography>
                 <RadioGroup value={radio} onChange={handleRadio}>
                   <FormControlLabel
                     value="机床"
@@ -185,7 +188,7 @@ export default function ResPage(props: ResPageProps) {
           </IAccordion>
           <Divider />
           <FormControl component="fieldset" className={classes.formControl}>
-            <FormLabel component="legend">限定时间范围</FormLabel>
+            <Typography variant='body1'>限定时间范围</Typography>
             <TextField
               label="最早开始时间"
               type="datetime-local"
@@ -206,17 +209,17 @@ export default function ResPage(props: ResPageProps) {
                 shrink: true,
               }}
             />
+            <Button
+              variant="contained"
+              disableElevation
+              color="primary"
+              size="large"
+              disabled={disabled}
+              className={classes.button}
+            >
+              应用
+            </Button>
           </FormControl>
-          <Button
-            variant="contained"
-            disableElevation
-            color="primary"
-            size="large"
-            disabled={disabled}
-            className={classes.button}
-          >
-            应用
-          </Button>
         </Paper>
       </Grid>
       <Grid item xs={10}>

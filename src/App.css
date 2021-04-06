@@ -1,3 +1,7 @@
 .filepond--credits {
   display: none;
 }
+
+.MuiAccordion-root.Mui-expanded {
+  margin: 0 !important;
+}

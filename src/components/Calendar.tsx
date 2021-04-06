@@ -1,20 +1,22 @@
 import moment from "moment";
-import { useState } from "react";
 import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
-import { TaskResult } from "../store/taskSlice";
+import { ResourceType, TaskResult } from "../store/taskSlice";
 
 interface CalendarProps {
   tasks: TaskResult;
+  types: {
+    [type in ResourceType]: boolean;
+  }
 }
 
 export default function Calendar(props: CalendarProps) {
-  const { tasks } = props;
+  const { tasks, types } = props;
   const localizer = momentLocalizer(moment);
 
   const genEvents = () => {
     let res: object[] = [];
-    for (const [key, value] of Object.entries(tasks)) {
-      if (value) {
+    for (let [key, value] of Object.entries(tasks)) {
+      if (value && types[key as ResourceType]) {
         for (let i in value) {
           value[i].forEach((value) => {
             res.push({
@@ -32,8 +34,8 @@ export default function Calendar(props: CalendarProps) {
 
   const genResourses = () => {
     let res: object[] = [];
-    for (const [key, value] of Object.entries(tasks)) {
-      if (value) {
+    for (let [key, value] of Object.entries(tasks)) {
+      if (value && types[key as ResourceType]) {
         for (let i in value) {
           res.push({
             "id": i,
