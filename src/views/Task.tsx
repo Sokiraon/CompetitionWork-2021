@@ -10,13 +10,14 @@ import {
   Tabs,
   Tab,
   Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   Button,
 } from "@material-ui/core";
-import { FilePondFile } from "filepond";
-import Papa from "papaparse";
 import React, { useState } from "react";
-import { FilePond } from "react-filepond";
-import { useSelector } from "react-redux";
 import {
   Link,
   Route,
@@ -24,7 +25,6 @@ import {
   useRouteMatch,
   Switch,
 } from "react-router-dom";
-import { selectTaskResult, TaskResult } from "../store/taskSlice";
 import ResPage from "../components/ResPage";
 import sampleData from "../components/SampleData";
 
@@ -40,27 +40,10 @@ export default function Task() {
   const { name } = useParams<{ name: string }>();
   const { url } = useRouteMatch<{ url: string }>();
 
+  const [open, setOpen] = useState(true);
   const [active, setActive] = useState(0);
-  const taskResult = useSelector(selectTaskResult);
   const onTabChange = (e: React.ChangeEvent<{}>, newVal: number) =>
     setActive(newVal);
-
-  const [data, setData] = useState<TaskResult[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
-  const updateFiles = (newFiles: FilePondFile[]) =>
-    setFiles([newFiles[0]?.file]);
-  const parse = () => {
-    Papa.parse(files[0], {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-      encoding: "utf-8",
-      complete: (res) => {
-        setData(res.data as TaskResult[]);
-        console.log(data);
-      },
-    });
-  };
 
   return (
     <React.Fragment>
@@ -87,8 +70,7 @@ export default function Task() {
               indicatorColor="primary"
               textColor="primary"
             >
-              <Tab label="基本信息" component={Link} to={`${url}`} />
-              <Tab label="排产结果" component={Link} to={`${url}/result`} />
+              <Tab label="排产结果" component={Link} to={`${url}`} />
               <Tab label="插单" component={Link} to={`${url}/add`} />
             </Tabs>
           </Toolbar>
@@ -96,10 +78,22 @@ export default function Task() {
       </Paper>
       <Switch>
         <Route exact path="/dashboard/:name">
-          <FilePond files={files} onupdatefiles={updateFiles} />
-          <Button onClick={parse}>Parse</Button>
-        </Route>
-        <Route path="/dashboard/:name/result">
+          <Dialog open={open} onClose={() => setOpen(false)}>
+            <DialogTitle>提示</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                任务尚在运行过程中，请稍候再来查看结果！
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button component={Link} to="/dashboard" color="primary">
+                回到控制台
+              </Button>
+              <Button component={Link} to={`${url}/add`} color="primary">
+                前往插单页面
+              </Button>
+            </DialogActions>
+          </Dialog>
           <ResPage data={sampleData} />
         </Route>
         <Route path="/dashboard/:name/add">

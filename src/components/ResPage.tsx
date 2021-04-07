@@ -6,7 +6,6 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  FormLabel,
   Grid,
   Icon,
   makeStyles,
