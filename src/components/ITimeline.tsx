@@ -28,6 +28,7 @@ export default function ITimeline(props: ITimelineProps) {
 
   const genTimeline = () => {
     let data = tasks[type] ?? {};
+    if (!Object.keys(data).length) return null;
     return Object.entries(data).map((entry) =>
       entry[1].map((value) => (
         <TimelineItem>
@@ -55,5 +56,9 @@ export default function ITimeline(props: ITimelineProps) {
     );
   };
 
-  return <Timeline align="alternate">{genTimeline()}</Timeline>;
+  return (
+    <Timeline align="alternate">
+      {genTimeline() ?? <Typography variant="h6">无数据</Typography>}
+    </Timeline>
+  );
 }
