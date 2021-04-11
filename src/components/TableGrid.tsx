@@ -3,6 +3,7 @@ import {
   Button,
   createStyles,
   Dialog,
+  DialogActions,
   DialogTitle,
   Icon,
   InputAdornment,
@@ -17,6 +18,10 @@ import React, { useState } from "react";
 import { TextField as FormTextField } from "formik-material-ui";
 import { Field, Form, Formik } from "formik";
 import { Alert } from "@material-ui/lab";
+import { FilePond } from "react-filepond";
+import { FilePondFile } from "filepond";
+import Papa from "papaparse";
+import { gridOptions } from "../store/tableGridDef";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: theme.spacing(3),
     },
     dialogActions: { margin: theme.spacing(3), float: "right" },
+    filepond: { width: "500px", marginTop: theme.spacing(0.5) },
   })
 );
 
@@ -55,18 +61,6 @@ interface ActionButtonProps {
   disabled?: boolean;
   text: string;
 }
-
-const gridOptions = {
-  animateRows: true,
-  undoRedoCellEditing: true,
-  rowSelection: "multiple",
-  defaultColDef: {
-    editable: true,
-    sortable: true,
-    filter: true,
-    resizable: true,
-  },
-};
 
 const ActionButton = (props: ActionButtonProps) => {
   const { endIcon, color, onClick, disabled, text } = props;
@@ -89,8 +83,13 @@ export default function TableGrid(props: TableGridProps) {
   const classes = useStyles();
   const { data, setData, colDefs } = props;
   const [gridApi, setGridApi] = useState<GridApi>();
-  const [addOpen, setAddOpen] = useState(false);
   const [delDisabled, setDelDisabled] = useState(true);
+
+  const [addOpen, setAddOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const updateFiles = (newFiles: FilePondFile[]) =>
+    setFiles(newFiles.map((fileItem) => fileItem.file));
 
   function updateDelete() {
     if (gridApi?.getSelectedRows().length) setDelDisabled(false);
@@ -106,8 +105,45 @@ export default function TableGrid(props: TableGridProps) {
     });
   }
 
+  function importData() {
+    for (let file of files) {
+      Papa.parse(file, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        encoding: "utf-8",
+        complete: (res) => {
+          let newData = res.data as object[];
+          setData([...data, ...newData]);
+        },
+      });
+    }
+    setImportOpen(false);
+  }
+
   return (
     <React.Fragment>
+      <Dialog open={importOpen} onClose={() => setImportOpen(false)}>
+        <DialogTitle>批量添加</DialogTitle>
+        <Alert severity="warning" elevation={0}>
+          只接受订单文件，最多5个。
+        </Alert>
+        <FilePond
+          files={files}
+          onupdatefiles={updateFiles}
+          allowMultiple={true}
+          maxFiles={5}
+          className={classes.filepond}
+          labelIdle='拖放到此处 或 <span class="filepond--label-action">手动选择</span>'
+        />
+        <DialogActions>
+          <Button onClick={() => setImportOpen(false)}>取消</Button>
+          <Button onClick={() => importData()} color="primary">
+            导入
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Dialog open={addOpen} onClose={() => setAddOpen(false)}>
         <DialogTitle>添加新行</DialogTitle>
         <Alert severity="info" elevation={0}>
@@ -148,7 +184,14 @@ export default function TableGrid(props: TableGridProps) {
           )}
         </Formik>
       </Dialog>
+
       <Box className={classes.actions}>
+        <ActionButton
+          endIcon="folder_open"
+          text="批量添加"
+          color="default"
+          onClick={() => setImportOpen(true)}
+        />
         <ActionButton
           endIcon="add"
           text="添加新行"
@@ -192,7 +235,7 @@ export default function TableGrid(props: TableGridProps) {
           onChange={(e) => gridApi?.setQuickFilter(e.target.value)}
         />
       </Box>
-      <Paper className={`ag-theme-material ${classes.table}`} elevation={2}>
+      <Paper className={`ag-theme-material ${classes.table}`}>
         <AgGridReact
           gridOptions={gridOptions}
           columnDefs={colDefs}

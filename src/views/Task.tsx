@@ -10,12 +10,10 @@ import {
   Tabs,
   Tab,
   Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
   Button,
+  Card,
+  CardContent,
+  CardActions,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -26,6 +24,8 @@ import {
   useRouteMatch,
   Switch,
 } from "react-router-dom";
+import { Dimmer } from "semantic-ui-react";
+import AddOrder from "../components/AddOrder";
 import ResPage from "../components/ResPage";
 import sampleData from "../components/SampleData";
 import { selectTaskStatus } from "../store/taskSlice";
@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     backButton: { marginRight: theme.spacing(2) },
     tabs: { marginLeft: theme.spacing(2) },
+    appBar: { marginBottom: theme.spacing(0.5) }
   })
 );
 
@@ -54,7 +55,7 @@ export default function Task() {
 
   return (
     <React.Fragment>
-      <Paper style={{ marginBottom: 8 }}>
+      <Paper className={classes.appBar}>
         <AppBar position="static" color="inherit" elevation={0}>
           <Toolbar variant="dense">
             <IconButton
@@ -85,36 +86,37 @@ export default function Task() {
       </Paper>
       <Switch>
         <Route exact path="/dashboard/:name">
-          <Dialog
-            open={open}
-            onClose={() => setOpen(false)}
-            maxWidth="xs"
-            fullWidth={true}
-          >
-            <DialogTitle>提示</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                任务尚在运行过程中，请稍候再来查看结果！
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button component={Link} to="/dashboard">
-                回到控制台
-              </Button>
-              <Button
-                component={Link}
-                to={`${url}/add`}
-                color="primary"
-                onClick={() => setActive(1)}
-              >
-                前往插单页面
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <ResPage data={sampleData} />
+          <Dimmer.Dimmable dimmed={open} blurring>
+            <Dimmer active={open}>
+              <Card>
+                <CardContent>
+                  <Typography gutterBottom variant='h5' component='h2'>
+                    提示
+                  </Typography>
+                  <Typography>
+                    任务尚在运行过程中，请稍候再来查看结果！
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button component={Link} to="/dashboard">
+                    回到控制台
+                  </Button>
+                  <Button
+                    component={Link}
+                    to={`${url}/add`}
+                    color="primary"
+                    onClick={() => setActive(1)}
+                  >
+                    前往插单页面
+                  </Button>
+                </CardActions>
+              </Card>
+            </Dimmer>
+            <ResPage data={sampleData} />
+          </Dimmer.Dimmable>
         </Route>
         <Route path="/dashboard/:name/add">
-          <p>This ensures the add feature.</p>
+          <AddOrder />
         </Route>
       </Switch>
     </React.Fragment>

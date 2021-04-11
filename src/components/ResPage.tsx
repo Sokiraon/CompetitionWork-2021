@@ -29,6 +29,7 @@ interface ResPageProps {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: { marginTop: theme.spacing(0.25) },
     icon: {
       marginRight: theme.spacing(2)
     },
@@ -102,7 +103,7 @@ export default function ResPage(props: ResPageProps) {
   };
 
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} className={classes.root}>
       <Grid item xs={2}>
         <Paper square>
           <IAccordion
