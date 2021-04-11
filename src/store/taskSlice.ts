@@ -59,4 +59,10 @@ export const selectTaskResult = (state: State) => (name: string) => {
     if (task.name === name) return task.result;
   }
 };
+export const selectTaskStatus = (state: State) => (name: string) => {
+  for (let task of state.tasks.taskList) {
+    if (task.name === name) return task.running;
+  }
+  return true;
+};
 export default taskSlice.reducer;

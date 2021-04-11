@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+import store from './store/store';
 
 import 'semantic-ui-css/semantic.min.css';
 import 'filepond/dist/filepond.min.css';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
-import { Provider } from 'react-redux';
-import store from './store/store';
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>

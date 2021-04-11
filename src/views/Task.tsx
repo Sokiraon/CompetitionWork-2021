@@ -17,7 +17,8 @@ import {
   DialogActions,
   Button,
 } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Link,
   Route,
@@ -27,6 +28,7 @@ import {
 } from "react-router-dom";
 import ResPage from "../components/ResPage";
 import sampleData from "../components/SampleData";
+import { selectTaskStatus } from "../store/taskSlice";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,11 +41,16 @@ export default function Task() {
   const classes = useStyles();
   const { name } = useParams<{ name: string }>();
   const { url } = useRouteMatch<{ url: string }>();
+  const taskRunning = useSelector(selectTaskStatus)(name);
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const onTabChange = (e: React.ChangeEvent<{}>, newVal: number) =>
     setActive(newVal);
+
+  useEffect(() => {
+    if (taskRunning) setOpen(true);
+  }, [taskRunning]);
 
   return (
     <React.Fragment>
@@ -78,7 +85,12 @@ export default function Task() {
       </Paper>
       <Switch>
         <Route exact path="/dashboard/:name">
-          <Dialog open={open} onClose={() => setOpen(false)}>
+          <Dialog
+            open={open}
+            onClose={() => setOpen(false)}
+            maxWidth="xs"
+            fullWidth={true}
+          >
             <DialogTitle>提示</DialogTitle>
             <DialogContent>
               <DialogContentText>
@@ -86,10 +98,15 @@ export default function Task() {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button component={Link} to="/dashboard" color="primary">
+              <Button component={Link} to="/dashboard">
                 回到控制台
               </Button>
-              <Button component={Link} to={`${url}/add`} color="primary">
+              <Button
+                component={Link}
+                to={`${url}/add`}
+                color="primary"
+                onClick={() => setActive(1)}
+              >
                 前往插单页面
               </Button>
             </DialogActions>
