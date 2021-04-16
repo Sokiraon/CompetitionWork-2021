@@ -15,7 +15,42 @@ export default function About() {
         </Typography>
         <List divided>
           <List.Item>
-            <List.Icon name='github' size='large' verticalAlign='middle' />
+            <List.Icon name='react' size='large' verticalAlign='middle' />
+            <List.Content>
+              <List.Header as='a' href='https://reactjs.org/' content='React' />
+              <List.Description content='MIT License' />
+            </List.Content>
+          </List.Item>
+          <List.Item>
+            <List.Icon name='uikit' size='large' verticalAlign='middle' />
+            <List.Content>
+              <List.Header as='a' href='https://material-ui.com/' content='Material-UI' />
+              <List.Description content='MIT License' />
+            </List.Content>
+          </List.Item>
+          <List.Item>
+            <List.Icon name='uikit' size='large' verticalAlign='middle' />
+            <List.Content>
+              <List.Header as='a' href='https://react.semantic-ui.com/' content='Semantic UI React' />
+              <List.Description content='MIT License' />
+            </List.Content>
+          </List.Item>
+          <List.Item>
+            <List.Icon name='code' size='large' verticalAlign='middle' />
+            <List.Content>
+              <List.Header as='a' href='https://redux.js.org/' content='Redux' />
+              <List.Description content='MIT License' />
+            </List.Content>
+          </List.Item>
+          <List.Item>
+            <List.Icon name='table' size='large' verticalAlign='middle' />
+            <List.Content>
+              <List.Header as='a' href='https://www.ag-grid.com/' content='AG Grid' />
+              <List.Description content='MIT License' />
+            </List.Content>
+          </List.Item>
+          <List.Item>
+            <List.Icon name='upload' size='large' verticalAlign='middle' />
             <List.Content>
               <List.Header as='a' href='https://pqina.nl/filepond/' content='Filepond' />
               <List.Description content='MIT License' />
