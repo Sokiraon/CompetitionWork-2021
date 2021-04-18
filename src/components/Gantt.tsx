@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import "gantt-schedule-timeline-calendar/dist/style.css";
-import { TaskResult } from "../store/taskSlice";
+import { TaskResult } from "../data/taskSlice";
 import DeepState from "gantt-schedule-timeline-calendar/node_modules/deep-state-observer";
 import GSTC, {
   Config,

@@ -21,7 +21,7 @@ import { Alert } from "@material-ui/lab";
 import { FilePond } from "react-filepond";
 import { FilePondFile } from "filepond";
 import Papa from "papaparse";
-import { gridOptions } from "../store/tableGridDef";
+import { gridOptions } from "../data/tableGridDef";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -82,6 +82,9 @@ const ActionButton = (props: ActionButtonProps) => {
 export default function TableGrid(props: TableGridProps) {
   const classes = useStyles();
   const { data, setData, colDefs } = props;
+  colDefs[0].checkboxSelection = true;
+  colDefs[0].headerCheckboxSelection = true;
+
   const [gridApi, setGridApi] = useState<GridApi>();
   const [delDisabled, setDelDisabled] = useState(true);
 
@@ -126,7 +129,7 @@ export default function TableGrid(props: TableGridProps) {
       <Dialog open={importOpen} onClose={() => setImportOpen(false)}>
         <DialogTitle>批量添加</DialogTitle>
         <Alert severity="warning" elevation={0}>
-          只接受订单文件，最多5个。
+          请仅选择与当前表格相匹配的数据文件，否则可能会出现异常结果。
         </Alert>
         <FilePond
           files={files}

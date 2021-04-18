@@ -1,9 +1,18 @@
-import { Typography } from "@material-ui/core";
+import { createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
 import React from "react";
 import { Container, Header, List } from "semantic-ui-react";
 import AppMenu from "../components/AppMenu";
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    icon: { paddingLeft: theme.spacing(0.25) }
+  })
+);
+
 export default function About() {
+  const classes = useStyles();
+  const { icon } = classes;
+
   return (
     <React.Fragment>
       <AppMenu />
@@ -22,21 +31,21 @@ export default function About() {
             </List.Content>
           </List.Item>
           <List.Item>
-            <List.Icon name='uikit' size='large' verticalAlign='middle' />
+            <List.Icon name='uikit' size='large' verticalAlign='middle' className={icon} />
             <List.Content>
               <List.Header as='a' href='https://material-ui.com/' content='Material-UI' />
               <List.Description content='MIT License' />
             </List.Content>
           </List.Item>
           <List.Item>
-            <List.Icon name='uikit' size='large' verticalAlign='middle' />
+            <List.Icon name='uikit' size='large' verticalAlign='middle' className={icon} />
             <List.Content>
               <List.Header as='a' href='https://react.semantic-ui.com/' content='Semantic UI React' />
               <List.Description content='MIT License' />
             </List.Content>
           </List.Item>
           <List.Item>
-            <List.Icon name='code' size='large' verticalAlign='middle' />
+            <List.Icon name='database' size='large' verticalAlign='middle' className={icon} />
             <List.Content>
               <List.Header as='a' href='https://redux.js.org/' content='Redux' />
               <List.Description content='MIT License' />

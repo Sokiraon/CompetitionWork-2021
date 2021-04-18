@@ -31,10 +31,11 @@ import {
 } from "@material-ui/core";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 import { useDispatch } from "react-redux";
-import { addTask } from "../store/taskSlice";
+import { addTask } from "../data/taskSlice";
 import { ColDef } from "ag-grid-community";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import TableGrid from "../components/TableGrid";
+import remoteControl from "../net/remoteControl";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -96,13 +97,15 @@ export default function New() {
     setFiles(newFiles.map((fileItem) => fileItem.file));
 
   const handleSubmit = () => {
+    const time = new Date().toLocaleString("zh-CN");
     dispatch(
       addTask({
         running: true,
         name: name,
-        startTime: new Date().toLocaleString("zh-CN"),
+        startTime: time,
       })
     );
+    remoteControl.pushNewTask(name, time, files);
     history.push("/dashboard");
   };
 

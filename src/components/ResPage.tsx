@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useState } from "react";
-import { ResourceType, TaskResult } from "../store/taskSlice";
+import { ResourceType, TaskResult } from "../data/taskSlice";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Calendar from "./Calendar";
 import ITimeline from "./ITimeline";

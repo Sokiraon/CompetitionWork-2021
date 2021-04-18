@@ -5,7 +5,7 @@ import TimelineConnector from "@material-ui/lab/TimelineConnector";
 import TimelineContent from "@material-ui/lab/TimelineContent";
 import TimelineOppositeContent from "@material-ui/lab/TimelineOppositeContent";
 import TimelineDot from "@material-ui/lab/TimelineDot";
-import { TaskResult } from "../store/taskSlice";
+import { TaskResult } from "../data/taskSlice";
 import { makeStyles, Paper, Typography } from "@material-ui/core";
 
 interface ITimelineProps {

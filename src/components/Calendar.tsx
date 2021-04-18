@@ -1,6 +1,6 @@
 import moment from "moment";
 import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
-import { ResourceType, TaskResult } from "../store/taskSlice";
+import { ResourceType, TaskResult } from "../data/taskSlice";
 
 interface CalendarProps {
   tasks: TaskResult;

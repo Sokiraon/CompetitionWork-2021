@@ -15,6 +15,7 @@ import {
   CardContent,
   CardActions,
 } from "@material-ui/core";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -28,13 +29,13 @@ import { Dimmer } from "semantic-ui-react";
 import AddOrder from "../components/AddOrder";
 import ResPage from "../components/ResPage";
 import sampleData from "../components/SampleData";
-import { selectTaskStatus } from "../store/taskSlice";
+import { selectTaskStatus } from "../data/taskSlice";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     backButton: { marginRight: theme.spacing(2) },
     tabs: { marginLeft: theme.spacing(2) },
-    appBar: { marginBottom: theme.spacing(0.5) }
+    appBar: { marginBottom: theme.spacing(0.5) },
   })
 );
 
@@ -50,7 +51,21 @@ export default function Task() {
     setActive(newVal);
 
   useEffect(() => {
-    if (taskRunning) setOpen(true);
+    if (taskRunning) {
+      axios
+        .post("http://159.75.220.54:5000/getResList", {
+          "TYPE": ["机床", "人员", "设备"],
+          "START_TIME": "2020-12-01 09:00:00",
+          "END_TIME": "2020-12-01 11:00:00",
+          "username": "david",
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [taskRunning]);
 
   return (
@@ -90,7 +105,7 @@ export default function Task() {
             <Dimmer active={open}>
               <Card>
                 <CardContent>
-                  <Typography gutterBottom variant='h5' component='h2'>
+                  <Typography gutterBottom variant="h5" component="h2">
                     提示
                   </Typography>
                   <Typography>

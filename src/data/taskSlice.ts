@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import remoteControl from "../net/remoteControl";
 
 export type ResourceType = "机床" | "人员" | "设备";
 

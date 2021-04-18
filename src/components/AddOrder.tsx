@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import { AgGridReact } from "ag-grid-react";
 import React, { useState } from "react";
-import { columnDefs, gridOptions, headers } from "../store/tableGridDef";
+import { columnDefs, gridOptions, headers } from "../data/tableGridDef";
 import TableGrid from "./TableGrid";
 
 interface TabPanelProps {
@@ -94,11 +94,12 @@ export default function AddOrder() {
                   <Tab label={header} />
                 ))}
               </Tabs>
+              <Divider />
             </Paper>
             <Paper className={`ag-theme-material ${classes.table}`}>
               <AgGridReact
                 gridOptions={gridOptions}
-                columnDefs={columnDefs[0]}
+                columnDefs={columnDefs[activeTable]}
               />
             </Paper>
           </TabPanel>

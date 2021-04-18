@@ -3,17 +3,17 @@ export const headers = [
 ];
 
 export const columnDefs = [[
-  { field: 'order_id', checkboxSelection: true, headerCheckboxSelection: true }, 
+  { field: 'order_id' }, 
   { field: 'description' }, 
   { field: 'product_id' },
   { field: 'product_amount' },
   { field: 'earliest_start_time' },
   { field: 'latest_end_time' },
 ], [
-  { field: 'product_id', checkboxSelection: true, headerCheckboxSelection: true },
+  { field: 'product_id' },
   { field: 'semi_product_id' },
 ], [
-  { field: 'semi_product_id', checkboxSelection: true, headerCheckboxSelection: true },
+  { field: 'semi_product_id' },
   { field: 'semi_product_field' },
   { field: 'part_id' },
   { field: 'part_field' },
@@ -27,7 +27,7 @@ export const columnDefs = [[
   { field: 'maximum_production_quantity' },
   { field: 'workspace' },
 ], [
-  { field: 'resource_id', checkboxSelection: true, headerCheckboxSelection: true },
+  { field: 'resource_id' },
   { field: 'field' },
   { field: 'resource_type' },
   { field: 'amount' },
@@ -35,7 +35,7 @@ export const columnDefs = [[
   { field: 'basic_attribute' },
   { field: 'workspace' },
 ], [
-  { field: 'part_id', checkboxSelection: true, headerCheckboxSelection: true },
+  { field: 'part_id' },
   { field: 'field' },
   { field: 'resource_attributes' },
   { field: 'amount' },

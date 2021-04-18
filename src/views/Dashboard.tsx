@@ -17,7 +17,7 @@ import {
 } from "semantic-ui-react";
 import Auth from "../net/auth";
 import AppMenu from "../components/AppMenu";
-import { selectTaskList } from "../store/taskSlice";
+import { selectTaskList } from "../data/taskSlice";
 
 export default function Dashboard() {
   const taskList = useSelector(selectTaskList);
