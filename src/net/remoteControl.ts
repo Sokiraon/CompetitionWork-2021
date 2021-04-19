@@ -7,9 +7,15 @@ class remoteControl {
   static checkNameAvailability(name: string) {
     return new Promise((resolve, reject) => {
       axios
-        .post(this.serverUrl, name)
-        .then((res) => {})
-        .catch((err) => {});
+        .post(this.serverUrl + "/isDuplicate", {
+          username: "david",
+          taskname: name
+        })
+        .then((res) => {
+          if (res.data === "ALREADY EXIST") reject("ALREADY EXIST");
+          else resolve("OK");
+        })
+        .catch((err) => console.log(err));
     });
   }
 

@@ -36,6 +36,11 @@ export const taskSlice = createSlice({
   },
   reducers: {
     addTask: (state, action) => {
+      console.log(action.payload);
+      for (let task of state.taskList) {
+        if (task.name === action.payload.name)
+          return;
+      }
       state.taskList.push(action.payload);
     },
     updateTaskStatus: (state, action) => {

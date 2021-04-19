@@ -28,8 +28,7 @@ import {
 import { Dimmer } from "semantic-ui-react";
 import AddOrder from "../components/AddOrder";
 import ResPage from "../components/ResPage";
-import sampleData from "../components/SampleData";
-import { selectTaskStatus } from "../data/taskSlice";
+import { selectTaskStatus, TaskResult } from "../data/taskSlice";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,7 +42,9 @@ export default function Task() {
   const classes = useStyles();
   const { name } = useParams<{ name: string }>();
   const { url } = useRouteMatch<{ url: string }>();
+  
   const taskRunning = useSelector(selectTaskStatus)(name);
+  const [data, setData] = useState<TaskResult>({});
 
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
@@ -52,15 +53,19 @@ export default function Task() {
 
   useEffect(() => {
     if (taskRunning) {
+      setOpen(true);
+    }
+    else {
       axios
         .post("http://159.75.220.54:5000/getResList", {
           "TYPE": ["机床", "人员", "设备"],
           "START_TIME": "2020-12-01 09:00:00",
           "END_TIME": "2020-12-01 11:00:00",
           "username": "david",
+          "taskname": name
         })
         .then((res) => {
-          console.log(res);
+          setData(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -127,7 +132,7 @@ export default function Task() {
                 </CardActions>
               </Card>
             </Dimmer>
-            <ResPage data={sampleData} />
+            <ResPage data={data} />
           </Dimmer.Dimmable>
         </Route>
         <Route path="/dashboard/:name/add">

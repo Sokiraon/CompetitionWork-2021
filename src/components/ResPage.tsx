@@ -65,21 +65,19 @@ export default function ResPage(props: ResPageProps) {
   const { 机床, 人员, 设备 } = check;
   const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheck({ ...check, [e.target.name]: e.target.checked });
-    setDisabled(false);
   };
 
   const [radio, setRadio] = useState<ResourceType>("机床");
   const handleRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRadio(e.target.value as ResourceType);
-    setDisabled(false);
   };
 
-  const [startBegin, setStartBegin] = useState("");
+  const [startBegin, setStartBegin] = useState("2020-12-01T09:00");
   const onBeginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStartBegin(e.target.value);
     setDisabled(false);
   };
-  const [startEnd, setStartEnd] = useState("");
+  const [startEnd, setStartEnd] = useState("2020-12-01T11:00");
   const onEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStartEnd(e.target.value);
     setDisabled(false);
@@ -192,7 +190,7 @@ export default function ResPage(props: ResPageProps) {
             <TextField
               label="最早开始时间"
               type="datetime-local"
-              defaultValue="2020-12-01T09:00"
+              value={startBegin}
               className={classes.timePicker}
               onChange={onBeginChange}
               InputLabelProps={{
@@ -202,7 +200,7 @@ export default function ResPage(props: ResPageProps) {
             <TextField
               label="最晚开始时间"
               type="datetime-local"
-              defaultValue="2020-12-01T11:00"
+              value={startEnd}
               className={classes.timePicker}
               onChange={onEndChange}
               InputLabelProps={{

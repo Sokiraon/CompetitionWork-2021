@@ -3,7 +3,7 @@ import {
   Button as MTButton,
   Typography,
 } from "@material-ui/core";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, useHistory } from "react-router";
 import { Link, Switch } from "react-router-dom";
@@ -29,26 +29,27 @@ interface TaskItem {
 export default function Dashboard() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const taskList = useSelector(selectTaskList);
+  const [taskList, setTaskList] = useState<Task[]>(useSelector(selectTaskList));
+  const tasks = useSelector(selectTaskList);
 
   useEffect(() => {
     if (!Auth.getInstance().loginState) {
       //history.push('/');
     }
-    remoteControl.fetchTasks("david")
-      .then((res) => {
-        console.log(res);
-        let tasks = res as Array<TaskItem>;
-        console.log(tasks);
-        for (let task of tasks) {
-          dispatch(addTask({
+    remoteControl.fetchTasks("david").then((res) => {
+      let tasks = res as Array<TaskItem>;
+      console.log(tasks);
+      for (let task of tasks) {
+        dispatch(
+          addTask({
             running: task["status"] === "FINISHED" ? false : true,
             name: task["taskname"],
-            startTime: task["start"]
-          }));
-        }
-      })
-  }, [history]);
+            startTime: task["start"],
+          })
+        );
+      }
+    });
+  }, [Auth.getInstance().loginState]);
 
   return (
     <React.Fragment>
@@ -69,7 +70,7 @@ export default function Dashboard() {
                 新任务
               </Button>
             </Header>
-            {taskList.length ? null : (
+            {tasks.length ? null : (
               <Message content="无任务，请创建新任务" warning attached="top" />
             )}
             <Table singleLine striped columns={4} selectable attached>
@@ -82,7 +83,7 @@ export default function Dashboard() {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {taskList.map(({ running, name, startTime }) => (
+                {tasks.map(({ running, name, startTime }) => (
                   <Table.Row key={name} positive={!running} warning={running}>
                     <Table.Cell collapsing>
                       {running ? (

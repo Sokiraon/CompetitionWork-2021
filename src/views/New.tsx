@@ -65,11 +65,28 @@ export default function New() {
   const [tableData, setTableData] = useState<object[]>([]);
   const [tableOpen, setTableOpen] = useState(false);
 
+  const [hasName, setHasName] = useState(false);
+  const [nameChecked, setNameChecked] = useState(false);
+  const [checkMsg, setCheckMsg] = useState("");
+
   const steps = ["欢迎", "取个名字", "来点数据", "做些修改", "大功告成"];
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
-  const checkAvailable = () => {};
+  const checkAvailable = () => {
+    setNameChecked(false);
+    remoteControl.checkNameAvailability(name)
+      .then(() => {
+        setHasName(false);
+        setNameChecked(true);
+        setCheckMsg("任务名可用！");
+      })
+      .catch(() => {
+        setHasName(true);
+        setNameChecked(true);
+        setCheckMsg("任务名已存在！");
+      })
+  };
 
   const iniTable = () => {
     if (files[fileIndex])
@@ -191,6 +208,12 @@ export default function New() {
                   }
                   fluid
                   onChange={(e) => setName(e.target.value)}
+                />
+                <Message
+                  positive={!hasName}
+                  negative={hasName}
+                  hidden={!nameChecked}
+                  header={checkMsg}
                 />
               </React.Fragment>
 
