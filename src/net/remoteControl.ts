@@ -9,7 +9,7 @@ class remoteControl {
       axios
         .post(this.serverUrl + "/isDuplicate", {
           username: "david",
-          taskname: name
+          taskname: name,
         })
         .then((res) => {
           if (res.data === "ALREADY EXIST") reject("ALREADY EXIST");
@@ -24,12 +24,12 @@ class remoteControl {
     files.forEach((file) => {
       formData.append("files", file);
     });
-    formData.append("name", name);
-    formData.append("startTime", startTime);
     axios
       .post(this.serverUrl + "/upload", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          username: "david",
+          taskname: name,
+          start: startTime,
         },
       })
       .then((res) => {

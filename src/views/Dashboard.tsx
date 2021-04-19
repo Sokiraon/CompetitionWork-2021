@@ -29,7 +29,6 @@ interface TaskItem {
 export default function Dashboard() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [taskList, setTaskList] = useState<Task[]>(useSelector(selectTaskList));
   const tasks = useSelector(selectTaskList);
 
   useEffect(() => {
@@ -38,7 +37,6 @@ export default function Dashboard() {
     }
     remoteControl.fetchTasks("david").then((res) => {
       let tasks = res as Array<TaskItem>;
-      console.log(tasks);
       for (let task of tasks) {
         dispatch(
           addTask({
@@ -99,7 +97,7 @@ export default function Dashboard() {
                       )}
                     </Table.Cell>
                     <Table.Cell content={name} />
-                    <Table.Cell content={startTime} />
+                    <Table.Cell content={startTime ?? "N/A"} />
                     <Table.Cell textAlign="right">
                       <MTButton
                         component={Link}

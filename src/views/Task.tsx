@@ -42,7 +42,7 @@ export default function Task() {
   const classes = useStyles();
   const { name } = useParams<{ name: string }>();
   const { url } = useRouteMatch<{ url: string }>();
-  
+
   const taskRunning = useSelector(selectTaskStatus)(name);
   const [data, setData] = useState<TaskResult>({});
 
@@ -51,18 +51,29 @@ export default function Task() {
   const onTabChange = (e: React.ChangeEvent<{}>, newVal: number) =>
     setActive(newVal);
 
+  const triggerUpdate = (start: string, end: string) => {
+    axios
+      .post("http://159.75.220.54:5000/getResList", {
+        TYPE: ["机床", "人员", "设备"],
+        START_TIME: start.split("T").join(" "),
+        END_TIME: end.split("T").join(" "),
+        username: "david",
+        taskname: name,
+      })
+      .then((res) => setData(res.data));
+  };
+
   useEffect(() => {
     if (taskRunning) {
       setOpen(true);
-    }
-    else {
+    } else {
       axios
         .post("http://159.75.220.54:5000/getResList", {
-          "TYPE": ["机床", "人员", "设备"],
-          "START_TIME": "2020-12-01 09:00:00",
-          "END_TIME": "2020-12-01 11:00:00",
-          "username": "david",
-          "taskname": name
+          TYPE: ["机床", "人员", "设备"],
+          START_TIME: "2020-12-01 09:00:00",
+          END_TIME: "2020-12-01 11:00:00",
+          username: "david",
+          taskname: name,
         })
         .then((res) => {
           setData(res.data);
@@ -132,7 +143,7 @@ export default function Task() {
                 </CardActions>
               </Card>
             </Dimmer>
-            <ResPage data={data} />
+            <ResPage data={data} triggerUpdate={triggerUpdate} />
           </Dimmer.Dimmable>
         </Route>
         <Route path="/dashboard/:name/add">

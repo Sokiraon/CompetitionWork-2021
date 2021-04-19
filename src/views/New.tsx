@@ -114,7 +114,7 @@ export default function New() {
     setFiles(newFiles.map((fileItem) => fileItem.file));
 
   const handleSubmit = () => {
-    const time = new Date().toLocaleString("zh-CN");
+    const time = new Date().toUTCString();
     dispatch(
       addTask({
         running: true,

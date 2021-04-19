@@ -25,6 +25,7 @@ import { IAccordion, IAccordionDetails, IAccordionSummary } from "./IAccordion";
 
 interface ResPageProps {
   data: TaskResult;
+  triggerUpdate: (start: string, end: string) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -50,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function ResPage(props: ResPageProps) {
-  const { data } = props;
+  const { data, triggerUpdate } = props;
   const classes = useStyles();
   const [disabled, setDisabled] = useState(true);
 
@@ -214,6 +215,7 @@ export default function ResPage(props: ResPageProps) {
               size="large"
               disabled={disabled}
               className={classes.button}
+              onClick={() => triggerUpdate(startBegin, startEnd)}
             >
               应用
             </Button>
