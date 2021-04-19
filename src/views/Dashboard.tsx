@@ -4,8 +4,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Route } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { Route, useHistory } from "react-router";
 import { Link, Switch } from "react-router-dom";
 import {
   Button,
@@ -17,16 +17,38 @@ import {
 } from "semantic-ui-react";
 import Auth from "../net/auth";
 import AppMenu from "../components/AppMenu";
-import { selectTaskList } from "../data/taskSlice";
+import { addTask, selectTaskList, Task } from "../data/taskSlice";
+import remoteControl from "../net/remoteControl";
+
+interface TaskItem {
+  taskname: string;
+  start: string;
+  status: string;
+}
 
 export default function Dashboard() {
+  const history = useHistory();
+  const dispatch = useDispatch();
   const taskList = useSelector(selectTaskList);
 
   useEffect(() => {
     if (!Auth.getInstance().loginState) {
       //history.push('/');
     }
-  });
+    remoteControl.fetchTasks("david")
+      .then((res) => {
+        console.log(res);
+        let tasks = res as Array<TaskItem>;
+        console.log(tasks);
+        for (let task of tasks) {
+          dispatch(addTask({
+            running: task["status"] === "FINISHED" ? false : true,
+            name: task["taskname"],
+            startTime: task["start"]
+          }));
+        }
+      })
+  }, [history]);
 
   return (
     <React.Fragment>

@@ -24,7 +24,8 @@ class Auth {
       axios.post(this.serverUrl + "/user/login", {
         username, password
       }).then((res) => {
-        if (res.data === 'SUCCESS') {
+        console.log(res);
+        if (res.data === "SUCCESS") {
           this.loginState = { username };
           resolve(res);
         }

@@ -33,6 +33,17 @@ class remoteControl {
         console.log(err);
       });
   }
+
+  static fetchTasks(username: string) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(this.serverUrl + "/taskList", { username })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => console.log(err));
+    });
+  }
 }
 
 export default remoteControl;

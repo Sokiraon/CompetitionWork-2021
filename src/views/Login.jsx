@@ -34,6 +34,7 @@ export default function Login() {
         history.push("/dashboard");
       })
       .catch((err) => {
+        console.log(err);
         setLoading(false);
         switch (err.data) {
           case "USER_NOT_FOUND":
