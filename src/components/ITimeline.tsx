@@ -44,7 +44,7 @@ export default function ITimeline(props: ITimelineProps) {
           <TimelineContent>
             <Paper elevation={3} className={classes.paper}>
               <Typography variant="h6" component="h1">
-                {value.process_id}
+                工序名：{value.process_id}
               </Typography>
               <Typography>{`名称：${
                 entry[0]

@@ -28,6 +28,7 @@ import {
 import { Dimmer } from "semantic-ui-react";
 import AddOrder from "../components/AddOrder";
 import ResPage from "../components/ResPage";
+import sampleData from "../components/SampleData";
 import { selectTaskStatus, TaskResult } from "../data/taskSlice";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -143,11 +144,11 @@ export default function Task() {
                 </CardActions>
               </Card>
             </Dimmer>
-            <ResPage data={data} triggerUpdate={triggerUpdate} />
+            <ResPage data={data ?? sampleData} triggerUpdate={triggerUpdate} />
           </Dimmer.Dimmable>
         </Route>
         <Route path="/dashboard/:name/add">
-          <AddOrder />
+          <AddOrder taskname={name} />
         </Route>
       </Switch>
     </React.Fragment>
