@@ -30,7 +30,7 @@ export default function Login() {
     Auth.getInstance()
       .loginWithPassword(data.username, data.password)
       .then(() => {
-        //MySocket.getInstance();
+        MySocket.getInstance();
         history.push("/dashboard");
       })
       .catch((err) => {

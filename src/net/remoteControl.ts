@@ -1,4 +1,5 @@
 import axios from "axios";
+import Papa from "papaparse";
 import { Task } from "../data/taskSlice";
 
 class remoteControl {
@@ -49,6 +50,19 @@ class remoteControl {
         })
         .catch((err) => console.log(err));
     });
+  }
+
+  static fetchOldData(taskname: string, filename: string) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(this.serverUrl + "/download", {
+          taskname, filename
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => reject(err));
+    })
   }
 }
 

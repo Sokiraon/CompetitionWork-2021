@@ -9,7 +9,8 @@ import {
   Theme,
 } from "@material-ui/core";
 import { AgGridReact } from "ag-grid-react";
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { columnDefs, gridOptions, headers } from "../data/tableGridDef";
 import TableGrid from "./TableGrid";
 
@@ -57,8 +58,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function AddOrder() {
   const classes = useStyles();
   const [tab, setTab] = useState(0);
+
+  let oldData: object[][] = [[], [], [], [], []];
   const [activeTable, setActiveTable] = useState(0);
-  const [data, setData] = useState<object[]>([]);
+
+  const [newData, setNewData] = useState<object[]>([]);
+
+  useEffect(() => {
+    //oldData[activeTable] = [];
+  }, [activeTable]);
 
   return (
     <Paper className={classes.root} square>
@@ -100,11 +108,12 @@ export default function AddOrder() {
               <AgGridReact
                 gridOptions={gridOptions}
                 columnDefs={columnDefs[activeTable]}
+                rowData={oldData[activeTable]}
               />
             </Paper>
           </TabPanel>
           <TabPanel value={tab} index={1}>
-            <TableGrid data={data} setData={setData} colDefs={columnDefs[0]} />
+            <TableGrid data={newData} setData={setNewData} colDefs={columnDefs[0]} />
           </TabPanel>
         </Grid>
       </Grid>
