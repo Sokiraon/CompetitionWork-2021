@@ -1,0 +1,24 @@
+{
+  "开发框架": "React",
+  "UI框架": ["Material-UI（基于Google Material Design）", "Semantic UI React"],
+  "网络通信": {
+    "axios": "基于Promise的HTTP库",
+    "socket.io-client": "JavaScript的WebSocket实现，提供实时、全双工的、基于事件的通信机制"
+  },
+  "代码质量": {
+    "Typescript": "为JavaScript提供静态的类型检查"
+  },
+  "数据可视化": {
+    "AG Grid": "提供多样化、可定制的表格组件",
+    "React Big Calendar": "提供日程表组件"
+  },
+  "数据管理": {
+    "Redux": "提供一个中心化、可预测的状态管理器"
+  },
+  "杂项": {
+    "Filepond": "现代化、美观的上传组件",
+    "Formik": "React的表单管理组件",
+    "Papa Parse": "快速、强大的CSV处理器",
+    "react-swipeable-views": "提供流畅的滑动效果"
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "xschedule",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.3",
@@ -23,7 +23,6 @@
     "filepond-plugin-file-validate-type": "^1.2.6",
     "formik": "^2.2.6",
     "formik-material-ui": "^3.0.1",
-    "gantt-schedule-timeline-calendar": "^3.6.6",
     "interactjs": "^1.10.8",
     "moment": "^2.29.1",
     "papaparse": "^5.3.0",
