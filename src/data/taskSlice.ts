@@ -44,8 +44,12 @@ export const taskSlice = createSlice({
     },
     updateTaskStatus: (state, action) => {
       let payload = action.payload;
+      console.log(payload);
       for (let task of state.taskList) {
-        if (task.name === payload.name) task.running = payload.running;
+        if (task.name === payload.name) {
+          task.running = payload.running;
+          task.startTime = payload.startTime;
+        }
       }
     },
     setResult: (state, action) => {
@@ -57,7 +61,7 @@ export const taskSlice = createSlice({
   },
 });
 
-export const { addTask } = taskSlice.actions;
+export const { addTask, updateTaskStatus } = taskSlice.actions;
 export const selectTaskList = (state: State) => state.tasks.taskList;
 export const selectTaskResult = (state: State) => (name: string) => {
   for (let task of state.tasks.taskList) {

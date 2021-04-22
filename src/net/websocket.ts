@@ -14,7 +14,6 @@ class MySocket {
 
   constructor() {
     this.socket = io(this.serverUrl);
-    this.socket.on("success", (data) => console.log(data));
     this.socket.on("update_task_status", (data) => {
       store.dispatch({
         type: "tasks/updateTaskStatus",

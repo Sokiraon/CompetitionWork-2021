@@ -36,8 +36,8 @@ export default function Dashboard() {
       //history.push('/');
     }
     remoteControl.fetchTasks("david").then((res) => {
-      let tasks = res as Array<TaskItem>;
-      for (let task of tasks) {
+      let taskList = res as Array<TaskItem>;
+      for (let task of taskList) {
         dispatch(
           addTask({
             running: task["status"] === "FINISHED" ? false : true,

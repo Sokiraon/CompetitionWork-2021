@@ -55,14 +55,24 @@ class remoteControl {
   static fetchOldData(taskname: string, filename: string) {
     return new Promise((resolve, reject) => {
       axios
-        .post(this.serverUrl + "/download", {
-          taskname, filename
-        })
-        .then((res) => {
-          console.log(res);
-        })
+        .post(
+          this.serverUrl + "/download",
+          {
+            username: "david",
+            taskname: taskname,
+            filename: filename,
+          },
+          {
+            headers: {
+              username: "david",
+              taskname: taskname,
+              filename: filename,
+            },
+          }
+        )
+        .then((res) => {})
         .catch((err) => reject(err));
-    })
+    });
   }
 }
 
